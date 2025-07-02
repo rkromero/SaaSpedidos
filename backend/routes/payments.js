@@ -4,9 +4,9 @@ const db = require('../config/database');
 
 const router = express.Router();
 
-// Configuración de MercadoPago (hardcodeada para MVP)
-const MERCADOPAGO_ACCESS_TOKEN = 'TEST-1234567890-MERCADOPAGO-ACCESS-TOKEN';
-const MERCADOPAGO_PUBLIC_KEY = 'TEST-MERCADOPAGO-PUBLIC-KEY';
+// Configuración de MercadoPago (con fallback hardcodeado para MVP)
+const MERCADOPAGO_ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN || 'TEST-1234567890-MERCADOPAGO-ACCESS-TOKEN';
+const MERCADOPAGO_PUBLIC_KEY = process.env.MERCADOPAGO_PUBLIC_KEY || 'TEST-MERCADOPAGO-PUBLIC-KEY';
 
 // Obtener configuración de MercadoPago para el frontend
 router.get('/config', async (req, res) => {

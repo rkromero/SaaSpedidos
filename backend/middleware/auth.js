@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const db = require('../config/database');
 
-// Clave secreta hardcodeada para MVP
-const JWT_SECRET = 'mi-clave-secreta-super-segura-2024';
+// Usar variable de entorno JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET || 'mi-clave-secreta-super-segura-2024';
 
 // Middleware para verificar token de negocio
 async function verifyBusinessToken(req, res, next) {
