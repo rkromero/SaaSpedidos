@@ -1,50 +1,49 @@
-# 🏭 SaaS Gestión de Pedidos
+# 📱 PedidosApp - SaaS Gestión de Pedidos Multi-Tenant
 
-Sistema SaaS multi-tenant para gestión de pedidos entre múltiples locales y una fábrica productora.
+Sistema SaaS multi-tenant para gestión de pedidos desde múltiples locales comerciales. Construido con Next.js, Express y PostgreSQL.
 
-## 🌟 Características
+## 🚀 Características
 
-- **Multi-tenant**: Cada local solo accede a su información
-- **Gestión de roles**: 4 tipos de usuarios con permisos específicos
-- **Tiempo real**: Actualizaciones en vivo del estado de pedidos
-- **Dashboard intuitivo**: Interfaz moderna con estadísticas
-- **Escalable**: Arquitectura pensada para crecer como SaaS
-
-## 👥 Roles del Sistema
-
-### 🏢 Super Admin (Dueño del SaaS)
-- Ve todos los locales, usuarios y pedidos
-- Estadísticas globales del sistema
-- Gestión de tenants
-
-### 🏪 Admin Local (Dueño del local)
-- Ve pedidos de su local
-- Gestiona productos de su catálogo
-- Administra empleados de su local
-
-### 👤 Empleado Local
-- Carga nuevos pedidos
-- Ve pedidos de su local
-
-### 🏭 Empleado Fábrica
-- Ve todos los pedidos de todos los locales
-- Actualiza estado de pedidos (en preparación, enviado, entregado)
+- **Multi-tenant**: Cada local tiene su propio espacio independiente
+- **Gestión de Pedidos**: Crea, edita y rastrea pedidos en tiempo real
+- **Catálogo de Productos**: Administra inventario con precios y categorías
+- **Gestión de Usuarios**: Roles de dueño y empleados con permisos
+- **Pagos**: Integración con MercadoPago
+- **Dashboard**: Métricas y reportes en tiempo real
+- **Backoffice**: Panel administrativo para gestionar todos los negocios
 
 ## 🛠️ Stack Tecnológico
 
-- **Frontend**: Next.js 14 + React + TypeScript
-- **Styling**: Tailwind CSS + ShadCN UI
-- **Backend**: Next.js API Routes
-- **Base de datos**: PostgreSQL (Supabase)
-- **Autenticación**: Supabase Auth
-- **ORM**: Supabase Client
-- **Hosting**: Vercel (Frontend) + Supabase (Backend/DB)
+### Frontend
+- **Next.js 14** con App Router
+- **React 18** con Hooks
+- **TypeScript** para tipado estático
+- **Tailwind CSS** para estilos
+- **ShadCN UI** para componentes
+- **Socket.io Client** para tiempo real
 
-## 🚀 Instalación y Setup
+### Backend
+- **Node.js** con Express
+- **PostgreSQL** como base de datos
+- **JWT** para autenticación
+- **Socket.io** para actualizaciones en tiempo real
+- **bcryptjs** para encriptación de contraseñas
+
+### Integraciones
+- **MercadoPago** para procesamiento de pagos
+- **Railway** para deployment (configurado)
+
+## 📋 Requisitos
+
+- Node.js 18 o superior
+- PostgreSQL 12 o superior
+- npm o yarn
+
+## ⚡ Instalación Rápida
 
 ### 1. Clonar el repositorio
 ```bash
-git clone <tu-repo>
+git clone <tu-repositorio>
 cd saas-gestion-pedidos
 ```
 
@@ -53,202 +52,264 @@ cd saas-gestion-pedidos
 npm install
 ```
 
-### 3. Configurar Supabase
+### 3. Configurar PostgreSQL
 
-1. Crea un proyecto en [Supabase](https://supabase.com)
-2. Copia las credenciales del proyecto
-3. Crea el archivo `.env.local`:
-
-```bash
-cp .env.local.example .env.local
+Crea una base de datos en PostgreSQL:
+```sql
+CREATE DATABASE saas_pedidos;
+CREATE USER postgres WITH PASSWORD 'postgres';
+GRANT ALL PRIVILEGES ON DATABASE saas_pedidos TO postgres;
 ```
 
-4. Completa las variables de entorno:
-```env
-NEXT_PUBLIC_SUPABASE_URL=tu_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key
-NEXT_PUBLIC_SUPABASE_PROJECT_ID=tu_project_id
+### 4. Inicializar la base de datos
+```bash
+# Ejecutar migraciones
+npm run migrate
+
+# Poblar datos iniciales (incluye admin por defecto)
+npm run seed
 ```
 
-### 4. Inicializar Supabase localmente (opcional)
+### 5. Ejecutar en desarrollo
 ```bash
-# Instalar Supabase CLI
-npm install -g supabase
+# Terminal 1: Backend
+npm run dev:server
 
-# Inicializar
-supabase start
-```
-
-### 5. Ejecutar migraciones
-```bash
-# Si usas Supabase localmente
-supabase db reset
-
-# Si usas Supabase cloud, ejecuta manualmente el SQL en:
-# Dashboard > SQL Editor > supabase/migrations/20240101000001_initial_schema.sql
-```
-
-### 6. Ejecutar seeding (datos de prueba)
-```bash
-npm run db:seed
-```
-
-### 7. Ejecutar el proyecto
-```bash
+# Terminal 2: Frontend  
 npm run dev
+
+# O ambos juntos:
+npm run dev:full
 ```
 
-## 🗃️ Estructura de la Base de Datos
+## 🔧 Configuración
+
+### Variables de Base de Datos (Hardcodeadas en MVP)
+
+El proyecto usa valores hardcodeados para facilitar el desarrollo inicial:
+
+**Base de Datos:**
+- Host: `localhost`
+- Puerto: `5432`
+- Database: `saas_pedidos`
+- Usuario: `postgres` 
+- Contraseña: `postgres`
+
+**JWT Secret:** `mi-clave-secreta-super-segura-2024`
+
+**MercadoPago (Sandbox):**
+- Access Token: `TEST-1234567890-MERCADOPAGO-ACCESS-TOKEN`
+- Public Key: `TEST-MERCADOPAGO-PUBLIC-KEY`
+
+## 📱 Uso del Sistema
+
+### Credenciales de Demo
+
+**Administrador del Sistema:**
+- Email: `admin@saas.com`
+- Contraseña: `admin123`
+- URL: `http://localhost:3000/auth/login` (seleccionar "Admin")
+
+### Para Negocios
+
+1. **Registrar Negocio:**
+   - Ir a `http://localhost:3000/auth/register`
+   - Completar formulario de registro
+   - Se crea automáticamente un usuario "owner"
+
+2. **Iniciar Sesión como Negocio:**
+   - Ir a `http://localhost:3000/auth/login`
+   - Seleccionar "Negocio"
+   - Usar credenciales del registro
+
+### Para Empleados
+
+1. **El dueño debe crear usuarios desde el dashboard**
+2. **Iniciar Sesión como Usuario:**
+   - Ir a `http://localhost:3000/auth/login`
+   - Seleccionar "Usuario" 
+   - Ingresar email, contraseña y **ID del negocio**
+
+## 🗂️ Estructura del Proyecto
+
+```
+saas-gestion-pedidos/
+├── backend/                    # Servidor Express
+│   ├── config/
+│   │   └── database.js        # Configuración PostgreSQL
+│   ├── middleware/
+│   │   └── auth.js           # Autenticación JWT
+│   ├── routes/               # Rutas de la API
+│   │   ├── auth.js           # Autenticación
+│   │   ├── business.js       # Gestión de negocios
+│   │   ├── products.js       # Productos
+│   │   ├── orders.js         # Pedidos
+│   │   ├── users.js          # Usuarios
+│   │   ├── admin.js          # Backoffice
+│   │   └── payments.js       # Pagos MercadoPago
+│   ├── scripts/
+│   │   ├── migrate.js        # Migraciones
+│   │   └── seed.js           # Datos iniciales
+│   └── server.js             # Servidor principal
+├── src/                      # Frontend Next.js
+│   ├── app/                  # App Router
+│   │   ├── auth/             # Páginas de autenticación
+│   │   ├── dashboard/        # Dashboard del negocio
+│   │   ├── admin/            # Backoffice administrativo
+│   │   ├── globals.css       # Estilos globales
+│   │   ├── layout.tsx        # Layout principal
+│   │   └── page.tsx          # Landing page
+│   ├── components/           # Componentes React
+│   │   └── ui/               # Componentes UI base
+│   ├── lib/                  # Utilidades
+│   ├── hooks/                # Hooks personalizados
+│   └── types/                # Tipos TypeScript
+└── package.json              # Dependencias
+```
+
+## 🗄️ Esquema de Base de Datos
 
 ### Tablas Principales
 
-#### `tenants` (Locales)
-- `id`: UUID único del local
-- `name`: Nombre del local
-- `address`: Dirección
-- `phone`: Teléfono
+- **plans**: Planes de suscripción (Free, Básico, Pro)
+- **businesses**: Negocios registrados (tenants)
+- **users**: Usuarios de cada negocio
+- **products**: Productos por negocio
+- **orders**: Pedidos
+- **order_items**: Items de cada pedido
+- **payments**: Registros de pagos
+- **admin_users**: Administradores del sistema
 
-#### `profiles` (Usuarios)
-- `id`: UUID del usuario (referencia a auth.users)
-- `email`: Email del usuario
-- `name`: Nombre completo
-- `role`: Rol del usuario
-- `tenant_id`: Local al que pertenece (null para super_admin y empleado_fabrica)
+### Relaciones
 
-#### `products` (Productos)
-- `id`: UUID del producto
-- `name`: Nombre del producto
-- `weight`: Peso en kg (opcional)
-- `price`: Precio unitario
-- `tenant_id`: Local propietario del producto
+- Cada negocio (`businesses`) pertenece a un plan (`plans`)
+- Cada usuario (`users`) pertenece a un negocio (`businesses`)
+- Cada producto (`products`) pertenece a un negocio (`businesses`)
+- Cada pedido (`orders`) pertenece a un negocio y fue creado por un usuario
+- Cada pago (`payments`) está asociado a un pedido y negocio
 
-#### `orders` (Pedidos)
-- `id`: UUID del pedido
-- `tenant_id`: Local que hizo el pedido
-- `status`: Estado del pedido
-- `total_amount`: Monto total
-- `created_by`: Usuario que creó el pedido
+## 🔐 Autenticación y Seguridad
 
-#### `order_items` (Items del pedido)
-- `id`: UUID del item
-- `order_id`: Pedido al que pertenece
-- `product_id`: Producto solicitado
-- `quantity`: Cantidad
-- `unit_price`: Precio unitario
-- `total_price`: Precio total del item
+### Tipos de Usuario
 
-## 🔐 Seguridad Multi-Tenant
+1. **Admin**: Acceso completo al backoffice
+2. **Business Owner**: Gestiona su negocio y empleados
+3. **Employee**: Crea pedidos y ve productos
 
-El sistema implementa **Row Level Security (RLS)** en PostgreSQL para garantizar que:
+### JWT Tokens
 
-- Cada local solo ve sus propios datos
-- Los empleados de fábrica ven todos los pedidos
-- Los super admins tienen acceso completo
-- Las políticas se aplican automáticamente en todas las consultas
+Cada tipo de usuario recibe un token JWT con:
+- `id`: ID del usuario/negocio
+- `email`: Email 
+- `type`: 'admin' | 'business' | 'user'
+- `businessId`: ID del negocio (solo para usuarios)
 
 ## 📊 Funcionalidades por Rol
 
-### Dashboard Super Admin
-- Estadísticas globales (pedidos totales, locales activos, ingresos)
-- Lista de todos los locales
-- Gestión de usuarios
-- Métricas de crecimiento
+### Administrador del Sistema
+- Dashboard con métricas globales
+- Gestión de todos los negocios
+- Ver todos los pedidos
+- Cambiar estados de negocios
+- Métricas de crecimiento y retención
 
-### Dashboard Local
-- Estadísticas del local (pedidos, productos, ventas)
-- Gestión de productos
-- Creación y seguimiento de pedidos
-- Lista de empleados
+### Dueño de Negocio
+- Dashboard con métricas del negocio
+- Gestión completa de productos (CRUD)
+- Ver todos los pedidos del negocio
+- Gestión de usuarios/empleados
+- Configuración del negocio
+- Procesar pagos con MercadoPago
 
-### Dashboard Fábrica
-- Vista de todos los pedidos por local
-- Actualización de estados de pedido
-- Métricas de producción
-- Historial de envíos
+### Empleado
+- Ver productos del negocio
+- Crear nuevos pedidos
+- Actualizar estado de pedidos (excepto cancelar)
+- Ver historial de pedidos
 
-## 🚀 Despliegue en Producción
+## 🚀 Deployment
 
-### Vercel (Frontend)
+### Preparado para Railway
+
+El proyecto incluye:
+- `Procfile` para Railway
+- `railway.json` con configuración
+- Scripts de migración automática
+
+### Variables de Entorno para Producción
+
+Cuando deploys en producción, configura:
+```env
+DATABASE_URL=postgresql://user:password@host:port/database
+JWT_SECRET=tu-clave-secreta-segura
+MERCADOPAGO_ACCESS_TOKEN=tu-token-real
+MERCADOPAGO_PUBLIC_KEY=tu-clave-publica-real
+```
+
+## 🧪 Testing
+
+### Datos de Prueba
+
+El sistema incluye:
+- 3 planes predefinidos (Free, Básico, Pro)
+- Usuario admin por defecto
+- Estructura completa de base de datos
+
+### Flujo de Prueba Recomendado
+
+1. **Registrar un negocio** desde `/auth/register`
+2. **Crear productos** desde el dashboard
+3. **Agregar empleados** (opcional)
+4. **Crear pedidos** y probar estados
+5. **Probar pagos** con MercadoPago sandbox
+6. **Ver métricas** en dashboard
+7. **Acceder como admin** para ver backoffice
+
+## 🛟 Soporte
+
+### Scripts Útiles
+
 ```bash
-# Conectar con GitHub y desplegar automáticamente
-# Configurar variables de entorno en Vercel Dashboard
+# Desarrollo
+npm run dev              # Solo frontend
+npm run dev:server       # Solo backend  
+npm run dev:full         # Ambos simultáneamente
+
+# Base de datos
+npm run migrate          # Ejecutar migraciones
+npm run seed            # Poblar datos iniciales
+
+# Producción
+npm run build           # Build del frontend
+npm run start           # Iniciar en producción
 ```
 
-### Supabase (Backend)
-- Base de datos PostgreSQL managed
-- Autenticación automática
-- APIs REST generadas automáticamente
-- Real-time subscriptions
+### Troubleshooting
 
-## 🧪 Usuarios de Prueba
+**Error de conexión a PostgreSQL:**
+1. Verificar que PostgreSQL esté ejecutándose
+2. Verificar credenciales en `backend/config/database.js`
+3. Verificar que la base de datos `saas_pedidos` existe
 
-Después del seeding, puedes crear estos usuarios en Supabase Dashboard:
+**Puerto ocupado:**
+- Frontend: puerto 3000
+- Backend: puerto 3001
+- Cambiar en archivos correspondientes si es necesario
 
-| Email | Contraseña | Rol | Local |
-|-------|-----------|-----|-------|
-| `admin@saas.com` | `password123` | super_admin | - |
-| `admin1@panaderia.com` | `password123` | admin_local | Panadería El Sol |
-| `empleado1@panaderia.com` | `password123` | empleado_local | Panadería El Sol |
-| `admin2@pasteleria.com` | `password123` | admin_local | Pastelería Luna |
-| `empleado2@pasteleria.com` | `password123` | empleado_local | Pastelería Luna |
-| `fabrica@empresa.com` | `password123` | empleado_fabrica | - |
-
-## 📁 Estructura del Proyecto
-
-```
-src/
-├── app/                    # App Router (Next.js 14)
-│   ├── auth/              # Páginas de autenticación
-│   ├── dashboard/         # Dashboard principal
-│   ├── admin/             # Panel de super admin
-│   └── api/               # API Routes
-├── components/            # Componentes React
-│   ├── ui/                # Componentes ShadCN UI
-│   ├── dashboard/         # Componentes del dashboard
-│   ├── admin/             # Componentes del admin
-│   ├── orders/            # Componentes de pedidos
-│   └── products/          # Componentes de productos
-├── hooks/                 # Custom hooks
-├── lib/                   # Utilidades y configuración
-└── types/                 # Tipos TypeScript
-
-supabase/
-├── config.toml            # Configuración de Supabase
-├── migrations/            # Migraciones SQL
-└── seed.sql               # Datos de prueba
-
-scripts/
-└── seed.ts                # Script de seeding
-```
-
-## 🔄 Próximas Funcionalidades
-
-- [ ] Sistema de notificaciones (email/SMS)
-- [ ] Integración de pagos (Stripe)
-- [ ] Reportes avanzados con gráficos
-- [ ] App móvil (React Native)
-- [ ] API webhooks para integraciones
-- [ ] Chat en tiempo real
-- [ ] Gestión de inventario
-- [ ] Sistema de facturación
-
-## 🤝 Contribuir
+## 🤝 Contribución
 
 1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+2. Crear rama feature (`git checkout -b feature/AmazingFeature`)
+3. Commit cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+5. Abrir Pull Request
 
-## 📝 Licencia
+## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT - ve el archivo [LICENSE](LICENSE) para detalles.
-
-## 📞 Soporte
-
-¿Necesitas ayuda? Abre un [issue](../../issues) o contacta al equipo de desarrollo.
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles.
 
 ---
 
-**¡Construido con ❤️ para escalabilidad y rendimiento!** 
+**¡Tu SaaS de gestión de pedidos está listo! 🎉**
+
+Para cualquier consulta o problema, crear un issue en el repositorio. 
