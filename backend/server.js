@@ -133,7 +133,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 
 // Inicializar base de datos y servidor
 async function startServer() {
