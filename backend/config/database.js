@@ -1,15 +1,22 @@
 const { Pool } = require('pg');
+const path = require('path');
 
-// Configuración de la base de datos (valores hardcodeados para MVP)
+// Cargar .env desde la raíz del proyecto
+const envPath = path.resolve(__dirname, '../../.env');
+console.log('🔍 Buscando .env en:', envPath);
+require('dotenv').config({ path: envPath });
+
+// Debug: Verificar que la variable se carga
+console.log('🔍 DATABASE_URL:', process.env.DATABASE_URL ? 'CARGADA' : 'NO ENCONTRADA');
+console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+
+// Configuración de la base de datos para Railway
 const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'saas_pedidos',
-  user: 'postgres',
-  password: 'postgres',
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: 10000,
 });
 
 // Función para ejecutar queries

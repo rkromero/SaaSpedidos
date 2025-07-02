@@ -20,14 +20,21 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
+    origin: process.env.NODE_ENV === 'production' ? true : "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? true : "http://localhost:3000",
+  credentials: true
+}));
 app.use(express.json());
 
 // Logging middleware
@@ -88,7 +95,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Inicializar base de datos y servidor
 async function startServer() {
@@ -96,8 +103,9 @@ async function startServer() {
     await db.initialize();
     console.log('Base de datos inicializada');
     
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
       console.log(`Servidor corriendo en puerto ${PORT}`);
+      console.log(`Entorno: ${process.env.NODE_ENV}`);
     });
   } catch (error) {
     console.error('Error al iniciar el servidor:', error);
