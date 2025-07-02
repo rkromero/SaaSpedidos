@@ -20,20 +20,30 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? true : "http://localhost:3000",
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: process.env.NODE_ENV === 'production' ? "*" : "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: false
   }
 });
 
-// Middleware
-app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
-}));
+// Middleware - Configuración simplificada para Railway
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: false
+  }));
+} else {
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+  }));
+}
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? true : "http://localhost:3000",
-  credentials: true
+  origin: process.env.NODE_ENV === 'production' ? "*" : "http://localhost:3000",
+  credentials: false,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.json());
 
@@ -58,15 +68,43 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payments', paymentRoutes);
 
-// Ruta de salud
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+// Rutas de prueba y salud
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'SaaS Gestión Pedidos API', 
+    status: 'running',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString() 
+  });
 });
 
-// Manejo de errores
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString() 
+  });
+});
+
+// Manejo de errores mejorado
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Error interno del servidor' });
+  console.error('Error capturado:', {
+    message: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+    body: req.body,
+    timestamp: new Date().toISOString()
+  });
+  
+  if (res.headersSent) {
+    return next(err);
+  }
+  
+  res.status(err.status || 500).json({ 
+    message: process.env.NODE_ENV === 'production' ? 'Error interno del servidor' : err.message,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Manejo de rutas no encontradas
@@ -112,6 +150,16 @@ async function startServer() {
     process.exit(1);
   }
 }
+
+// Manejo de errores no capturados
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
+});
 
 startServer();
 
