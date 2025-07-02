@@ -1,9 +1,14 @@
+import { config } from 'dotenv'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import pool from '../src/lib/database'
 
+// Cargar variables de entorno desde .env.local
+config({ path: '.env.local' })
+
 async function runMigrations() {
   console.log('🔄 Ejecutando migraciones en Railway PostgreSQL...')
+  console.log(`📍 Conectando a: ${process.env.DATABASE_URL?.substring(0, 50)}...`)
 
   try {
     // Leer el archivo de migración
