@@ -1,17 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Configuración simplificada para Railway
+  output: 'standalone',
   async rewrites() {
-    // En Railway, el backend estará en un servicio separado
-    const apiUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXT_PUBLIC_API_URL || 'https://backend-production-63c7.up.railway.app'
-      : 'http://localhost:8080';
-      
+    // En Railway, usamos rutas relativas ya que todo está en el mismo servicio
+    if (process.env.NODE_ENV === 'production') {
+      return [];
+    }
+    
+    // En desarrollo, redirigir al backend local
     return [
       {
         source: '/api/:path*',
-        destination: `${apiUrl}/api/:path*`,
+        destination: 'http://localhost:8080/api/:path*',
       },
-    ]
+    ];
   },
 }
 

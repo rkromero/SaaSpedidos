@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 
 // Importar rutas
 const authRoutes = require('./routes/auth');
@@ -68,8 +69,31 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payments', paymentRoutes);
 
-// Rutas de prueba y salud
-app.get('/', (req, res) => {
+// Servir archivos estáticos del frontend en producción
+if (process.env.NODE_ENV === 'production') {
+  // Servir archivos estáticos de Next.js
+  app.use('/_next', express.static(path.join(__dirname, '../.next')));
+  app.use(express.static(path.join(__dirname, '../public')));
+  
+  // Manejar todas las rutas no-API sirviendo el HTML de Next.js
+  app.get('*', (req, res, next) => {
+    // Si es una ruta de API, continúa con el siguiente middleware
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    
+    // Para otras rutas, servir el index.html
+    res.sendFile(path.join(__dirname, '../.next/server/pages/index.html'), (err) => {
+      if (err) {
+        console.error('Error sirviendo archivo:', err);
+        res.status(500).send('Error interno del servidor');
+      }
+    });
+  });
+}
+
+// Ruta raíz para el backend
+app.get('/api', (req, res) => {
   res.json({ 
     message: 'SaaS Gestión Pedidos API', 
     status: 'running',

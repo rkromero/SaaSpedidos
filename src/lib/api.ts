@@ -1,5 +1,7 @@
 // Configuración de API para conectar con Railway
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '' // En producción usamos rutas relativas
+  : 'http://localhost:8080'; // En desarrollo usamos el backend local
 
 // Headers por defecto
 const defaultHeaders = {
