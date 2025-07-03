@@ -14,8 +14,7 @@
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:server\"",
     "migrate": "node backend/scripts/migrate.js",
     "seed": "node backend/scripts/seed.js",
-    "railway:migrate": "npm run migrate",
-    "postbuild": "npm run railway:migrate"
+    "railway:migrate": "npm run migrate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",
