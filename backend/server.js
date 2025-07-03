@@ -207,8 +207,10 @@ const PORT = process.env.PORT || 3000;
 async function startServer() {
   try {
     console.log('🚀 Iniciando servidor SaaS Gestión Pedidos...');
-    console.log('🔧 Puerto:', PORT);
+    console.log('🔧 process.env.PORT:', process.env.PORT);
+    console.log('🔧 Puerto final:', PORT);
     console.log('🔧 Entorno:', process.env.NODE_ENV);
+    console.log('🔧 Timestamp:', new Date().toISOString());
     
     await db.initialize();
     console.log('✅ Base de datos inicializada');
@@ -217,6 +219,7 @@ async function startServer() {
       console.log(`✅ Servidor corriendo en puerto ${PORT}`);
       console.log(`✅ Entorno: ${process.env.NODE_ENV}`);
       console.log(`✅ Servidor listo para recibir conexiones`);
+      console.log(`✅ Timestamp: ${new Date().toISOString()}`);
     });
   } catch (error) {
     console.error('❌ Error al iniciar el servidor:', error);
