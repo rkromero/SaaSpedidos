@@ -71,23 +71,67 @@ app.use('/api/payments', paymentRoutes);
 
 // Servir archivos estáticos del frontend en producción
 if (process.env.NODE_ENV === 'production') {
+  console.log('🔧 Configurando servidor de archivos estáticos...');
+  
   // Servir archivos estáticos de Next.js
   app.use('/_next', express.static(path.join(__dirname, '../.next')));
   app.use(express.static(path.join(__dirname, '../public')));
   
-  // Manejar todas las rutas no-API sirviendo el HTML de Next.js
+  // Manejar todas las rutas no-API sirviendo una página simple
   app.get('*', (req, res, next) => {
     // Si es una ruta de API, continúa con el siguiente middleware
     if (req.path.startsWith('/api/')) {
       return next();
     }
     
-    // Para otras rutas, servir el index.html
-    res.sendFile(path.join(__dirname, '../.next/server/pages/index.html'), (err) => {
-      if (err) {
-        console.error('Error sirviendo archivo:', err);
-        res.status(500).send('Error interno del servidor');
-      }
+    console.log('📄 Sirviendo página para:', req.path);
+    
+    // Para otras rutas, servir una página HTML simple
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>SaaS Gestión Pedidos</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+            .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h1 { color: #333; text-align: center; }
+            .status { background: #e8f5e8; padding: 20px; border-radius: 5px; margin: 20px 0; }
+            .api-link { display: inline-block; background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+            .api-link:hover { background: #0056b3; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>🚀 SaaS Gestión Pedidos</h1>
+            <div class="status">
+              <strong>✅ Servidor funcionando correctamente</strong><br>
+              <p>El backend está activo y la API está disponible.</p>
+            </div>
+            <p>Puedes acceder a:</p>
+            <ul>
+              <li><a href="/api/health" class="api-link">API Health Check</a></li>
+              <li><a href="/api" class="api-link">API Info</a></li>
+            </ul>
+            <p><strong>Estado:</strong> Listo para recibir peticiones</p>
+            <p><strong>Entorno:</strong> ${process.env.NODE_ENV}</p>
+            <p><strong>Puerto:</strong> ${PORT}</p>
+          </div>
+        </body>
+      </html>
+    `);
+  });
+} else {
+  // En desarrollo, solo servir una página simple de información
+  app.get('/', (req, res) => {
+    res.json({ 
+      message: 'SaaS Gestión Pedidos - Servidor de desarrollo',
+      status: 'running',
+      environment: process.env.NODE_ENV,
+      frontend: 'http://localhost:3000',
+      api: 'http://localhost:8080/api'
     });
   });
 }
@@ -157,20 +201,25 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // Inicializar base de datos y servidor
 async function startServer() {
   try {
+    console.log('🚀 Iniciando servidor SaaS Gestión Pedidos...');
+    console.log('🔧 Puerto:', PORT);
+    console.log('🔧 Entorno:', process.env.NODE_ENV);
+    
     await db.initialize();
-    console.log('Base de datos inicializada');
+    console.log('✅ Base de datos inicializada');
     
     server.listen(PORT, '0.0.0.0', () => {
-      console.log(`Servidor corriendo en puerto ${PORT}`);
-      console.log(`Entorno: ${process.env.NODE_ENV}`);
+      console.log(`✅ Servidor corriendo en puerto ${PORT}`);
+      console.log(`✅ Entorno: ${process.env.NODE_ENV}`);
+      console.log(`✅ Servidor listo para recibir conexiones`);
     });
   } catch (error) {
-    console.error('Error al iniciar el servidor:', error);
+    console.error('❌ Error al iniciar el servidor:', error);
     process.exit(1);
   }
 }

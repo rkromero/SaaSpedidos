@@ -36,11 +36,23 @@ async function query(text, params) {
 // Función para inicializar la base de datos
 async function initialize() {
   try {
+    console.log('🔄 Inicializando base de datos...');
+    
+    // Probar conexión
+    await query('SELECT 1');
+    console.log('✅ Conexión a base de datos exitosa');
+    
     // Crear tablas si no existen
     await createTables();
-    console.log('Tablas creadas exitosamente');
+    console.log('✅ Tablas creadas/verificadas exitosamente');
+    
+    // Seed inicial
+    await seedDatabase();
+    console.log('✅ Datos iniciales verificados');
+    
   } catch (error) {
-    console.error('Error al inicializar la base de datos:', error);
+    console.error('❌ Error al inicializar la base de datos:', error);
+    console.error('❌ Stack trace:', error.stack);
     throw error;
   }
 }
