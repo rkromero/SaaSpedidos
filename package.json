@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start --hostname 0.0.0.0",
+    "start": "next start --hostname 0.0.0.0 --port ${PORT:-8080}",
     "start:server": "node backend/server.js",
     "lint": "next lint",
     "server": "node backend/server.js",
