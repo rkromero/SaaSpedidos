@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "HOSTNAME=0.0.0.0 next start",
     "start:server": "node backend/server.js",
     "lint": "next lint",
     "server": "node backend/server.js",
