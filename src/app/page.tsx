@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import TestConnection from '@/components/TestConnection'
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -82,6 +83,21 @@ export default function LandingPage() {
               Sin tarjeta de crédito • Plan gratuito incluido
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Test Connection Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              🚀 Backend en Railway
+            </h2>
+            <p className="text-lg text-gray-600">
+              Prueba la conexión con nuestro backend desplegado en Railway
+            </p>
+          </div>
+          <TestConnection />
         </div>
       </section>
 
