@@ -9,7 +9,7 @@
     "sleepApplication": false,
     "restartPolicyType": "always",
     "startCommand": "node backend/server.js",
-    "healthcheckPath": "/api/health",
-    "healthcheckTimeout": 300
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 60
   }
 } 

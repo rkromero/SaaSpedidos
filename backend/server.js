@@ -19,13 +19,21 @@ const db = require('./config/database');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
+
+// Desactivar Socket.io temporalmente para debugging
+/*const io = socketIo(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' ? "*" : "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: false
   }
-});
+});*/
+
+// Mock io para que no falle el código
+const io = { 
+  on: () => {},
+  emit: () => {}
+};
 
 // Middleware - Configuración simplificada para Railway
 if (process.env.NODE_ENV === 'production') {
@@ -72,11 +80,28 @@ app.use('/api/payments', paymentRoutes);
 // Rutas de API importantes (ANTES del manejo de archivos estáticos)
 app.get('/api/health', (req, res) => {
   console.log('🔍 Health check solicitado');
-  res.json({ 
-    status: 'OK', 
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString() 
-  });
+  try {
+    // Respuesta simple y directa
+    res.status(200).json({ 
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      port: PORT,
+      environment: process.env.NODE_ENV || 'development'
+    });
+  } catch (error) {
+    console.error('❌ Error en health check:', error);
+    res.status(500).json({ 
+      status: 'ERROR',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Health check adicional más simple
+app.get('/health', (req, res) => {
+  console.log('🔍 Health check simple solicitado');
+  res.status(200).send('OK');
 });
 
 app.get('/api', (req, res) => {
@@ -181,8 +206,8 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Ruta no encontrada' });
 });
 
-// Socket.io para tiempo real
-io.on('connection', (socket) => {
+// Socket.io para tiempo real (DESACTIVADO TEMPORALMENTE)
+/*io.on('connection', (socket) => {
   console.log('Usuario conectado:', socket.id);
   
   // Unirse a sala de negocio
@@ -200,7 +225,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('Usuario desconectado:', socket.id);
   });
-});
+});*/
 
 // FORZAR USO DEL PUERTO CORRECTO DE RAILWAY
 const PORT = process.env.PORT || 3000;
