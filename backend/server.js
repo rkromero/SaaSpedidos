@@ -69,6 +69,25 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payments', paymentRoutes);
 
+// Rutas de API importantes (ANTES del manejo de archivos estáticos)
+app.get('/api/health', (req, res) => {
+  console.log('🔍 Health check solicitado');
+  res.json({ 
+    status: 'OK', 
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString() 
+  });
+});
+
+app.get('/api', (req, res) => {
+  res.json({ 
+    message: 'SaaS Gestión Pedidos API', 
+    status: 'running',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString() 
+  });
+});
+
 // Servir archivos estáticos del frontend en producción
 if (process.env.NODE_ENV === 'production') {
   console.log('🔧 Configurando servidor de archivos estáticos...');
@@ -135,24 +154,6 @@ if (process.env.NODE_ENV === 'production') {
     });
   });
 }
-
-// Ruta raíz para el backend
-app.get('/api', (req, res) => {
-  res.json({ 
-    message: 'SaaS Gestión Pedidos API', 
-    status: 'running',
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString() 
-  });
-});
-
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString() 
-  });
-});
 
 // Manejo de errores mejorado
 app.use((err, req, res, next) => {
