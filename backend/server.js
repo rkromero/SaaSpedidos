@@ -218,17 +218,31 @@ async function startServer() {
       console.log('⚠️  ADVERTENCIA: process.env.PORT no está definido, usando puerto 3000');
     }
     
+    // Inicializar base de datos
     await db.initialize();
     console.log('✅ Base de datos inicializada');
     
+    // Iniciar servidor
     server.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ === SERVIDOR CORRIENDO EN PUERTO ${PORT} === ✅`);
       console.log(`✅ Entorno: ${process.env.NODE_ENV}`);
       console.log(`✅ Servidor listo para recibir conexiones`);
+      console.log(`✅ URL Health Check: http://localhost:${PORT}/api/health`);
       console.log(`✅ Timestamp: ${new Date().toISOString()}`);
     });
+    
+    // Manejar cierre graceful
+    process.on('SIGTERM', () => {
+      console.log('🔴 Recibida señal SIGTERM, cerrando servidor...');
+      server.close(() => {
+        console.log('🔴 Servidor cerrado');
+        process.exit(0);
+      });
+    });
+    
   } catch (error) {
     console.error('❌ Error al iniciar el servidor:', error);
+    console.error('❌ Stack trace:', error.stack);
     process.exit(1);
   }
 }
