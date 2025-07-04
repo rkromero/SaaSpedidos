@@ -131,7 +131,7 @@ if (process.env.NODE_ENV === 'production') {
       status: 'running',
       environment: process.env.NODE_ENV,
       frontend: 'http://localhost:3000',
-      api: 'http://localhost:8080/api'
+      api: 'http://localhost:3000/api'
     });
   });
 }
@@ -201,22 +201,28 @@ io.on('connection', (socket) => {
   });
 });
 
+// FORZAR USO DEL PUERTO CORRECTO DE RAILWAY
 const PORT = process.env.PORT || 3000;
 
 // Inicializar base de datos y servidor
 async function startServer() {
   try {
+    console.log('🚀 === NUEVA VERSIÓN DESPLEGADA === 🚀');
     console.log('🚀 Iniciando servidor SaaS Gestión Pedidos...');
     console.log('🔧 process.env.PORT:', process.env.PORT);
     console.log('🔧 Puerto final:', PORT);
     console.log('🔧 Entorno:', process.env.NODE_ENV);
     console.log('🔧 Timestamp:', new Date().toISOString());
     
+    if (!process.env.PORT) {
+      console.log('⚠️  ADVERTENCIA: process.env.PORT no está definido, usando puerto 3000');
+    }
+    
     await db.initialize();
     console.log('✅ Base de datos inicializada');
     
     server.listen(PORT, '0.0.0.0', () => {
-      console.log(`✅ Servidor corriendo en puerto ${PORT}`);
+      console.log(`✅ === SERVIDOR CORRIENDO EN PUERTO ${PORT} === ✅`);
       console.log(`✅ Entorno: ${process.env.NODE_ENV}`);
       console.log(`✅ Servidor listo para recibir conexiones`);
       console.log(`✅ Timestamp: ${new Date().toISOString()}`);
