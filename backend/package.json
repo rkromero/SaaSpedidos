@@ -4,7 +4,7 @@
   "description": "Backend para sistema de pedidos SaaS",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "prisma generate && node server.js",
     "build": "prisma generate",
     "dev": "nodemon server.js",
     "prisma:generate": "prisma generate",
