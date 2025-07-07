@@ -7,8 +7,16 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
+const allowedOrigins = [
+  'https://frontend-production-ff86.up.railway.app',
+  'http://localhost:3000'
+];
+
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json());
 
 // Rutas básicas
