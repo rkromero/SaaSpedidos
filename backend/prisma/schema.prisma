@@ -58,7 +58,7 @@ model Producto {
   nombre      String
   descripcion String?
   precio      Decimal  @db.Decimal(10, 2)
-  peso        Decimal  @db.Decimal(8, 2)? // Peso en kg
+  peso        Decimal? @db.Decimal(8, 2)  // Peso en kg
   stock       Int      @default(0)
   activo      Boolean  @default(true)
   imagen      String?
