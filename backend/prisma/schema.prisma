@@ -13,18 +13,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Modelo para los espacios/tiendas
-model Espacio {
-  id          String    @id @default(cuid())
+// Modelo para los negocios/franquicias
+model Negocio {
+  id          String   @id @default(cuid())
   nombre      String
   descripcion String?
-  activo      Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  direccion   String?
+  telefono    String?
+  email       String?
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   
   // Relaciones
+  dueño       Usuario? @relation("NegocioDueño", fields: [dueñoId], references: [id])
+  dueñoId     String?  @unique
+  franquiciados Usuario[] @relation("NegocioFranquiciados")
   productos   Producto[]
   pedidos     Pedido[]
+}
+
+// Modelo para los usuarios (dueños y franquiciados)
+model Usuario {
+  id        String   @id @default(cuid())
+  nombre    String
+  email     String   @unique
+  password  String   // Hash de la contraseña
+  telefono  String?
+  tipo      String   @default("FRANQUICIADO") // DUEÑO, FRANQUICIADO
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relaciones
+  negocioDueño     Negocio? @relation("NegocioDueño")
+  negocioFranquiciado Negocio? @relation("NegocioFranquiciados", fields: [negocioId], references: [id])
+  negocioId        String?
+  pedidos          Pedido[]
 }
 
 // Modelo para los productos
@@ -33,31 +58,18 @@ model Producto {
   nombre      String
   descripcion String?
   precio      Decimal  @db.Decimal(10, 2)
+  peso        Decimal  @db.Decimal(8, 2)? // Peso en kg
   stock       Int      @default(0)
   activo      Boolean  @default(true)
   imagen      String?
   categoria   String?
-  espacioId   String
+  negocioId   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   // Relaciones
-  espacio     Espacio       @relation(fields: [espacioId], references: [id])
+  negocio     Negocio       @relation(fields: [negocioId], references: [id])
   detalles    DetallePedido[]
-}
-
-// Modelo para los usuarios/clientes
-model Usuario {
-  id        String   @id @default(cuid())
-  nombre    String
-  email     String   @unique
-  telefono  String?
-  activo    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Relaciones
-  pedidos   Pedido[]
 }
 
 // Modelo para los pedidos
@@ -67,13 +79,13 @@ model Pedido {
   estado      String   @default("PENDIENTE") // PENDIENTE, CONFIRMADO, EN_PREPARACION, ENVIADO, ENTREGADO, CANCELADO
   total       Decimal  @db.Decimal(10, 2)
   notas       String?
-  espacioId   String
+  negocioId   String
   usuarioId   String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
   // Relaciones
-  espacio     Espacio       @relation(fields: [espacioId], references: [id])
+  negocio     Negocio       @relation(fields: [negocioId], references: [id])
   usuario     Usuario       @relation(fields: [usuarioId], references: [id])
   detalles    DetallePedido[]
 }

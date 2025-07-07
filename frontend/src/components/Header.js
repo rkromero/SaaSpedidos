@@ -1,15 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Header() {
+function Header({ user, onLogout }) {
   return (
     <header className="header">
-      <h1>SaaS Pedidos</h1>
-      <nav className="nav">
-        <Link to="/">Espacios</Link>
-        <Link to="/carrito">Carrito</Link>
-        <Link to="/admin">Admin</Link>
-      </nav>
+      <div className="header-content">
+        <div className="header-left">
+          <h1>SaaS Pedidos</h1>
+        </div>
+        
+        <div className="header-right">
+          <div className="user-info">
+            <span className="user-name">{user?.nombre}</span>
+            <span className="user-type">({user?.tipo === 'DUEÑO' ? 'Dueño' : 'Franquiciado'})</span>
+          </div>
+          <button onClick={onLogout} className="btn btn-logout">
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
     </header>
   );
 }
