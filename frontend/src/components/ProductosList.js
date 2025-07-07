@@ -28,22 +28,20 @@ const ProductosList = () => {
   const [carrito, setCarrito] = useState({});
 
   useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_BASE_URL}/productos/${espacioId}`);
+        setProductos(response.data);
+      } catch (err) {
+        setError('Error al cargar los productos');
+        console.error('Error fetching productos:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchProductos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [espacioId, fetchProductos]);
-
-  const fetchProductos = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/productos/${espacioId}`);
-      setProductos(response.data);
-    } catch (err) {
-      setError('Error al cargar los productos');
-      console.error('Error fetching productos:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [espacioId]);
 
   const agregarAlCarrito = (producto) => {
     setCarrito(prev => ({
