@@ -29,7 +29,8 @@ const ProductosList = () => {
 
   useEffect(() => {
     fetchProductos();
-  }, [espacioId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [espacioId, fetchProductos]);
 
   const fetchProductos = async () => {
     try {
