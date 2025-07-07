@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para los negocios/franquicias
+model Negocio {
+  id          String   @id @default(cuid())
+  nombre      String
+  descripcion String?
+  direccion   String?
+  telefono    String?
+  email       String?
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  dueño       Usuario? @relation("NegocioDueño", fields: [dueñoId], references: [id])
+  dueñoId     String?  @unique
+  franquiciados Usuario[] @relation("NegocioFranquiciados")
+  productos   Producto[]
+  pedidos     Pedido[]
+}
+
+// Modelo para los usuarios (dueños y franquiciados)
+model Usuario {
+  id        String   @id @default(cuid())
+  nombre    String
+  email     String   @unique
+  password  String   // Hash de la contraseña
+  telefono  String?
+  tipo      String   @default("FRANQUICIADO") // DUEÑO, FRANQUICIADO
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relaciones
+  negocioDueño     Negocio? @relation("NegocioDueño")
+  negocioFranquiciado Negocio? @relation("NegocioFranquiciados", fields: [negocioId], references: [id])
+  negocioId        String?
+  pedidos          Pedido[]
+}
+
+// Modelo para los productos
+model Producto {
+  id          String   @id @default(cuid())
+  nombre      String
+  descripcion String?
+  precio      Decimal  @db.Decimal(10, 2)
+  peso        Decimal  @db.Decimal(8, 2)? // Peso en kg
+  stock       Int      @default(0)
+  activo      Boolean  @default(true)
+  imagen      String?
+  categoria   String?
+  negocioId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  negocio     Negocio       @relation(fields: [negocioId], references: [id])
+  detalles    DetallePedido[]
+}
+
+// Modelo para los pedidos
+model Pedido {
+  id          String   @id @default(cuid())
+  numero      String   @unique
+  estado      String   @default("PENDIENTE") // PENDIENTE, CONFIRMADO, EN_PREPARACION, ENVIADO, ENTREGADO, CANCELADO
+  total       Decimal  @db.Decimal(10, 2)
+  notas       String?
+  negocioId   String
+  usuarioId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  negocio     Negocio       @relation(fields: [negocioId], references: [id])
+  usuario     Usuario       @relation(fields: [usuarioId], references: [id])
+  detalles    DetallePedido[]
+}
+
+// Modelo para los detalles de pedido
+model DetallePedido {
+  id         String   @id @default(cuid())
+  cantidad   Int
+  precio     Decimal  @db.Decimal(10, 2)
+  subtotal   Decimal  @db.Decimal(10, 2)
+  pedidoId   String
+  productoId String
+  createdAt  DateTime @default(now())
+  
+  // Relaciones
+  pedido     Pedido    @relation(fields: [pedidoId], references: [id])
+  producto   Producto  @relation(fields: [productoId], references: [id])
+}
