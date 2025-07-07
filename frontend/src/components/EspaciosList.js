@@ -10,7 +10,8 @@ function EspaciosList() {
   useEffect(() => {
     const fetchEspacios = async () => {
       try {
-        const response = await axios.get('/api/espacios');
+        const baseURL = process.env.REACT_APP_API_URL || '';
+        const response = await axios.get(`${baseURL}/api/espacios`);
         setEspacios(response.data);
         setLoading(false);
       } catch (err) {

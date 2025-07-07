@@ -12,7 +12,8 @@ function Carrito() {
 
   const fetchCarrito = async () => {
     try {
-      const response = await axios.get('/api/carrito');
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      const response = await axios.get(`${baseURL}/api/carrito`);
       setCarrito(response.data.items || []);
       setLoading(false);
     } catch (err) {
@@ -23,7 +24,8 @@ function Carrito() {
 
   const actualizarCantidad = async (productoId, nuevaCantidad) => {
     try {
-      await axios.put(`/api/carrito/actualizar`, {
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      await axios.put(`${baseURL}/api/carrito/actualizar`, {
         productoId,
         cantidad: nuevaCantidad
       });
@@ -35,7 +37,8 @@ function Carrito() {
 
   const eliminarProducto = async (productoId) => {
     try {
-      await axios.delete(`/api/carrito/eliminar/${productoId}`);
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      await axios.delete(`${baseURL}/api/carrito/eliminar/${productoId}`);
       fetchCarrito();
     } catch (err) {
       alert('Error al eliminar producto');
@@ -44,7 +47,8 @@ function Carrito() {
 
   const realizarPedido = async () => {
     try {
-      await axios.post('/api/pedidos');
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      await axios.post(`${baseURL}/api/pedidos`);
       alert('Pedido realizado con éxito');
       setCarrito([]);
     } catch (err) {

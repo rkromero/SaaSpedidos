@@ -14,10 +14,11 @@ function AdminPanel() {
 
   const fetchData = async () => {
     try {
+      const baseURL = process.env.REACT_APP_API_URL || '';
       const [pedidosRes, espaciosRes, productosRes] = await Promise.all([
-        axios.get('/api/pedidos'),
-        axios.get('/api/espacios'),
-        axios.get('/api/productos')
+        axios.get(`${baseURL}/api/pedidos`),
+        axios.get(`${baseURL}/api/espacios`),
+        axios.get(`${baseURL}/api/productos`)
       ]);
       
       setPedidos(pedidosRes.data);
@@ -32,7 +33,8 @@ function AdminPanel() {
 
   const cambiarEstadoPedido = async (pedidoId, nuevoEstado) => {
     try {
-      await axios.put(`/api/pedidos/${pedidoId}/estado`, { estado: nuevoEstado });
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      await axios.put(`${baseURL}/api/pedidos/${pedidoId}/estado`, { estado: nuevoEstado });
       fetchData();
     } catch (err) {
       alert('Error al cambiar estado del pedido');

@@ -12,9 +12,10 @@ function ProductosList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const baseURL = process.env.REACT_APP_API_URL || '';
         const [productosResponse, espacioResponse] = await Promise.all([
-          axios.get(`/api/espacios/${espacioId}/productos`),
-          axios.get(`/api/espacios/${espacioId}`)
+          axios.get(`${baseURL}/api/espacios/${espacioId}/productos`),
+          axios.get(`${baseURL}/api/espacios/${espacioId}`)
         ]);
         
         setProductos(productosResponse.data);
@@ -31,7 +32,8 @@ function ProductosList() {
 
   const agregarAlCarrito = async (productoId) => {
     try {
-      await axios.post('/api/carrito/agregar', {
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      await axios.post(`${baseURL}/api/carrito/agregar`, {
         productoId,
         cantidad: 1
       });
