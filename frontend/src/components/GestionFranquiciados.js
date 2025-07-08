@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext';
 import './GestionFranquiciados.css';
 
 function GestionFranquiciados() {
@@ -15,6 +16,7 @@ function GestionFranquiciados() {
     telefono: '',
     password: ''
   });
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     fetchFranquiciados();
@@ -39,6 +41,7 @@ function GestionFranquiciados() {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching franquiciados:', err);
+      showError('Error al cargar franquiciados');
       setLoading(false);
     }
   };
@@ -62,9 +65,9 @@ function GestionFranquiciados() {
       
       fetchFranquiciados();
       resetForm();
-      alert('Franquiciado creado exitosamente. Se enviará un email con las credenciales.');
+      showSuccess('Franquiciado creado exitosamente. Se enviará un email con las credenciales.');
     } catch (err) {
-      alert(err.response?.data?.message || 'Error al crear franquiciado');
+      showError(err.response?.data?.message || 'Error al crear franquiciado');
     }
   };
 
@@ -78,8 +81,9 @@ function GestionFranquiciados() {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchFranquiciados();
+      showSuccess('Estado del franquiciado actualizado exitosamente');
     } catch (err) {
-      alert('Error al cambiar estado del franquiciado');
+      showError('Error al cambiar estado del franquiciado');
     }
   };
 
@@ -92,7 +96,7 @@ function GestionFranquiciados() {
     e.preventDefault();
     
     if (!newPassword || newPassword.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres');
+      showError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
     
@@ -104,12 +108,12 @@ function GestionFranquiciados() {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('Contraseña cambiada exitosamente');
+      showSuccess('Contraseña cambiada exitosamente');
       setShowPasswordModal(false);
       setNewPassword('');
       setSelectedFranquiciado(null);
     } catch (err) {
-      alert(err.response?.data?.message || 'Error al cambiar contraseña');
+      showError(err.response?.data?.message || 'Error al cambiar contraseña');
     }
   };
 
@@ -124,9 +128,9 @@ function GestionFranquiciados() {
       await axios.post(`${baseURL}/api/usuarios/${id}/reset-password`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('Se enviará un email con la nueva contraseña al franquiciado.');
+      showSuccess('Se enviará un email con la nueva contraseña al franquiciado.');
     } catch (err) {
-      alert('Error al resetear contraseña');
+      showError('Error al resetear contraseña');
     }
   };
 

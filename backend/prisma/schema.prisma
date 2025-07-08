@@ -59,7 +59,6 @@ model Producto {
   descripcion String?
   precio      Decimal  @db.Decimal(10, 2)
   peso        Decimal? @db.Decimal(8, 2)  // Peso en kg
-  stock       Int      @default(0)
   activo      Boolean  @default(true)
   imagen      String?
   categoria   String?
@@ -76,7 +75,7 @@ model Producto {
 model Pedido {
   id          String   @id @default(cuid())
   numero      String   @unique
-  estado      String   @default("PENDIENTE") // PENDIENTE, CONFIRMADO, EN_PREPARACION, ENVIADO, ENTREGADO, CANCELADO
+  estado      String   @default("NUEVO_PEDIDO") // NUEVO_PEDIDO, EN_FABRICACION, ENTREGADO
   total       Decimal  @db.Decimal(10, 2)
   notas       String?
   negocioId   String

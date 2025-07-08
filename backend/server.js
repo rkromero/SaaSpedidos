@@ -208,11 +208,11 @@ app.get('/api/negocios/stats', authenticateToken, async (req, res) => {
     const [totalProductos, totalFranquiciados, pedidosPendientes, ventasMes] = await Promise.all([
       prisma.producto.count({ where: { negocioId, activo: true } }),
       prisma.usuario.count({ where: { negocioId, tipo: 'FRANQUICIADO', activo: true } }),
-      prisma.pedido.count({ where: { negocioId, estado: 'PENDIENTE' } }),
+      prisma.pedido.count({ where: { negocioId, estado: 'NUEVO_PEDIDO' } }),
       prisma.pedido.aggregate({
         where: {
           negocioId,
-          estado: { in: ['CONFIRMADO', 'EN_PREPARACION', 'ENVIADO', 'ENTREGADO'] },
+          estado: { in: ['EN_FABRICACION', 'ENTREGADO'] },
           createdAt: {
             gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
           }
@@ -267,7 +267,7 @@ app.post('/api/productos', authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'Negocio no encontrado' });
     }
 
-    const { nombre, descripcion, precio, peso, stock, categoria } = req.body;
+    const { nombre, descripcion, precio, peso, categoria } = req.body;
 
     const producto = await prisma.producto.create({
       data: {
@@ -275,7 +275,6 @@ app.post('/api/productos', authenticateToken, async (req, res) => {
         descripcion,
         precio: parseFloat(precio),
         peso: peso ? parseFloat(peso) : null,
-        stock: parseInt(stock),
         categoria,
         negocioId: negocio.id
       }
@@ -295,7 +294,7 @@ app.put('/api/productos/:id', authenticateToken, async (req, res) => {
     }
 
     const { id } = req.params;
-    const { nombre, descripcion, precio, peso, stock, categoria } = req.body;
+    const { nombre, descripcion, precio, peso, categoria } = req.body;
 
     const producto = await prisma.producto.update({
       where: { id },
@@ -304,7 +303,6 @@ app.put('/api/productos/:id', authenticateToken, async (req, res) => {
         descripcion,
         precio: parseFloat(precio),
         peso: peso ? parseFloat(peso) : null,
-        stock: parseInt(stock),
         categoria
       }
     });
@@ -607,7 +605,7 @@ app.post('/api/pedidos', authenticateToken, async (req, res) => {
     // Generar número de pedido
     const numero = `PED-${Date.now()}`;
     
-    // Calcular total y verificar stock
+    // Calcular total - no verificar stock ya que es para fabricación
     let total = 0;
     const detalles = [];
     
@@ -620,10 +618,6 @@ app.post('/api/pedidos', authenticateToken, async (req, res) => {
         throw new Error(`Producto ${item.productoId} no encontrado`);
       }
       
-      if (producto.stock < item.cantidad) {
-        throw new Error(`Stock insuficiente para ${producto.nombre}`);
-      }
-      
       const subtotal = producto.precio * item.cantidad;
       total += subtotal;
       
@@ -633,20 +627,15 @@ app.post('/api/pedidos', authenticateToken, async (req, res) => {
         subtotal,
         productoId: item.productoId
       });
-
-      // Actualizar stock
-      await prisma.producto.update({
-        where: { id: item.productoId },
-        data: { stock: producto.stock - item.cantidad }
-      });
     }
     
-    // Crear pedido
+    // Crear pedido con estado inicial "NUEVO_PEDIDO"
     const pedido = await prisma.pedido.create({
       data: {
         numero,
         total,
         notas,
+        estado: 'NUEVO_PEDIDO',
         negocioId: req.user.negocioId,
         usuarioId: req.user.id,
         detalles: {
@@ -677,6 +666,12 @@ app.put('/api/pedidos/:id/estado', authenticateToken, async (req, res) => {
 
     const { id } = req.params;
     const { estado } = req.body;
+    
+    // Validar que el estado sea uno de los permitidos
+    const estadosPermitidos = ['NUEVO_PEDIDO', 'EN_FABRICACION', 'ENTREGADO'];
+    if (!estadosPermitidos.includes(estado)) {
+      return res.status(400).json({ message: 'Estado no válido' });
+    }
     
     const pedido = await prisma.pedido.update({
       where: { id },
@@ -710,10 +705,6 @@ app.post('/api/carrito/agregar', authenticateToken, async (req, res) => {
     
     if (!producto || !producto.activo) {
       return res.status(404).json({ message: 'Producto no encontrado' });
-    }
-    
-    if (producto.stock < cantidad) {
-      return res.status(400).json({ message: 'Stock insuficiente' });
     }
     
     res.json({ message: 'Producto agregado al carrito' });

@@ -4,6 +4,8 @@ import Landing from './components/Landing';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Header from './components/Header';
+import ToastContainer from './components/Toast';
+import { ToastProvider } from './contexts/ToastContext';
 
 import Carrito from './components/Carrito';
 import AdminPanel from './components/AdminPanel';
@@ -41,21 +43,24 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App">
-        {user && <Header user={user} onLogout={handleLogout} />}
-        <main className="container">
-          <Routes>
-            <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
-            <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
-            <Route path="/dashboard/*" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-            <Route path="/carrito" element={<Carrito />} />
-            <Route path="/admin" element={<AdminPanel />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <ToastProvider>
+      <Router>
+        <div className="App">
+          {user && <Header user={user} onLogout={handleLogout} />}
+          <main className="container">
+            <Routes>
+              <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
+              <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
+              <Route path="/dashboard/*" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
+              <Route path="/carrito" element={<Carrito />} />
+              <Route path="/admin" element={<AdminPanel />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+          <ToastContainer />
+        </div>
+      </Router>
+    </ToastProvider>
   );
 }
 

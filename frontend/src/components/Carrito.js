@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext';
 
 function Carrito() {
   const [carrito, setCarrito] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     fetchCarrito();
@@ -30,8 +32,9 @@ function Carrito() {
         cantidad: nuevaCantidad
       });
       fetchCarrito();
+      showSuccess('Cantidad actualizada');
     } catch (err) {
-      alert('Error al actualizar cantidad');
+      showError('Error al actualizar cantidad');
     }
   };
 
@@ -40,8 +43,9 @@ function Carrito() {
       const baseURL = process.env.REACT_APP_API_URL || '';
       await axios.delete(`${baseURL}/api/carrito/eliminar/${productoId}`);
       fetchCarrito();
+      showSuccess('Producto eliminado del carrito');
     } catch (err) {
-      alert('Error al eliminar producto');
+      showError('Error al eliminar producto');
     }
   };
 
@@ -49,10 +53,10 @@ function Carrito() {
     try {
       const baseURL = process.env.REACT_APP_API_URL || '';
       await axios.post(`${baseURL}/api/pedidos`);
-      alert('Pedido realizado con éxito');
+      showSuccess('Pedido realizado con éxito');
       setCarrito([]);
     } catch (err) {
-      alert('Error al realizar el pedido');
+      showError('Error al realizar el pedido');
     }
   };
 

@@ -80,9 +80,15 @@
   margin: 0.5rem 0;
 }
 
-.producto-info .stock {
-  color: #374151;
+.producto-info .fabricacion {
+  color: #059669;
   font-weight: 500;
+  background: #d1fae5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  display: inline-block;
+  margin-top: 0.25rem;
 }
 
 .btn-small {

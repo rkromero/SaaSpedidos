@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext';
 import './GestionProductos.css';
 
 function GestionProductos({ onProductoCreated }) {
@@ -11,10 +12,10 @@ function GestionProductos({ onProductoCreated }) {
     descripcion: '',
     precio: '',
     peso: '',
-    stock: '',
     categoria: ''
   });
   const [editingId, setEditingId] = useState(null);
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     fetchProductos();
@@ -31,6 +32,7 @@ function GestionProductos({ onProductoCreated }) {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching productos:', err);
+      showError('Error al cargar productos');
       setLoading(false);
     }
   };
@@ -63,12 +65,14 @@ function GestionProductos({ onProductoCreated }) {
       fetchProductos();
       resetForm();
       
+      showSuccess(editingId ? 'Producto actualizado exitosamente' : 'Producto creado exitosamente');
+      
       // Si se está creando un producto y hay callback, ejecutarlo
       if (isCreating && onProductoCreated) {
         onProductoCreated();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Error al guardar producto');
+      showError(err.response?.data?.message || 'Error al guardar producto');
     }
   };
 
@@ -78,7 +82,6 @@ function GestionProductos({ onProductoCreated }) {
       descripcion: producto.descripcion || '',
       precio: producto.precio.toString(),
       peso: producto.peso?.toString() || '',
-      stock: producto.stock.toString(),
       categoria: producto.categoria || ''
     });
     setEditingId(producto.id);
@@ -97,8 +100,9 @@ function GestionProductos({ onProductoCreated }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchProductos();
+      showSuccess('Producto eliminado exitosamente');
     } catch (err) {
-      alert('Error al eliminar producto');
+      showError('Error al eliminar producto');
     }
   };
 
@@ -108,7 +112,6 @@ function GestionProductos({ onProductoCreated }) {
       descripcion: '',
       precio: '',
       peso: '',
-      stock: '',
       categoria: ''
     });
     setEditingId(null);
@@ -198,16 +201,10 @@ function GestionProductos({ onProductoCreated }) {
               </div>
               
               <div className="form-group">
-                <label htmlFor="stock">Stock *</label>
-                <input
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  value={formData.stock}
-                  onChange={handleChange}
-                  required
-                  min="0"
-                />
+                <label>Tipo de Producto</label>
+                <p className="fabricacion-notice">
+                  Los productos se fabrican bajo pedido
+                </p>
               </div>
             </div>
 
@@ -268,10 +265,8 @@ function GestionProductos({ onProductoCreated }) {
                   )}
                   
                   <div className="detail-item">
-                    <span className="label">Stock:</span>
-                    <span className={`value ${producto.stock === 0 ? 'stock-zero' : ''}`}>
-                      {producto.stock}
-                    </span>
+                    <span className="label">Tipo:</span>
+                    <span className="value fabricacion">Para fabricación</span>
                   </div>
                   
                   {producto.categoria && (

@@ -185,9 +185,23 @@
   font-size: 0.875rem;
 }
 
-.stock-zero {
-  color: #dc2626;
+.fabricacion-notice {
+  color: #059669;
+  font-size: 0.875rem;
+  font-style: italic;
+  margin: 0;
+  padding: 0.5rem;
+  background: #d1fae5;
+  border-radius: 4px;
+}
+
+.detail-item .value.fabricacion {
+  color: #059669;
   font-weight: 600;
+  background: #d1fae5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
 }
 
 /* Buttons */

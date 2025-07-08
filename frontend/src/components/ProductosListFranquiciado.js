@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext';
 import NuevoPedido from './NuevoPedido';
 
 function ProductosListFranquiciado() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showNuevoPedido, setShowNuevoPedido] = useState(false);
+  const { showError } = useToast();
 
   useEffect(() => {
     fetchProductos();
@@ -30,13 +32,14 @@ function ProductosListFranquiciado() {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching productos:', err);
+      showError('Error al cargar productos');
       setLoading(false);
     }
   };
 
   const handlePedidoCreado = () => {
     setShowNuevoPedido(false);
-    // Optionally refresh products to show updated stock
+    // Refresh products
     fetchProductos();
   };
 
@@ -73,12 +76,7 @@ function ProductosListFranquiciado() {
             <div key={producto.id} className="producto-card">
               <div className="producto-header">
                 <h3>{producto.nombre}</h3>
-                {producto.stock <= 0 && (
-                  <span className="stock-badge sin-stock">Sin Stock</span>
-                )}
-                {producto.stock > 0 && producto.stock <= 5 && (
-                  <span className="stock-badge bajo-stock">Poco Stock</span>
-                )}
+                <span className="fabricacion-badge">Para fabricación</span>
               </div>
               
               <p className="producto-descripcion">{producto.descripcion}</p>
@@ -89,12 +87,6 @@ function ProductosListFranquiciado() {
                   {producto.peso && (
                     <span className="peso">({producto.peso} kg)</span>
                   )}
-                </div>
-                
-                <div className="stock-info">
-                  <span className={`stock ${producto.stock <= 5 ? 'low' : ''}`}>
-                    Stock: {producto.stock}
-                  </span>
                 </div>
                 
                 {producto.categoria && (

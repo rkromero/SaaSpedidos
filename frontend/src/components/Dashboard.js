@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext';
 import Carrito from './Carrito';
 import AdminPanel from './AdminPanel';
 import GestionProductos from './GestionProductos';
 import GestionFranquiciados from './GestionFranquiciados';
 import ProductosListFranquiciado from './ProductosListFranquiciado';
 import NuevoPedido from './NuevoPedido';
+import DashboardMetrics from './DashboardMetrics';
 import './Dashboard.css';
 
 function Dashboard({ user }) {
   const [negocio, setNegocio] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { showError } = useToast();
 
   useEffect(() => {
     const fetchNegocio = async () => {
@@ -25,6 +28,7 @@ function Dashboard({ user }) {
         setLoading(false);
       } catch (err) {
         console.error('Error fetching negocio:', err);
+        showError('Error al cargar información del negocio');
         setLoading(false);
       }
     };
@@ -47,6 +51,7 @@ function Dashboard({ user }) {
 
         <div className="dashboard-nav">
           <Link to="/dashboard" className="nav-item">Resumen</Link>
+          <Link to="/dashboard/metricas" className="nav-item">📊 Métricas</Link>
           <Link to="/dashboard/productos" className="nav-item">Productos</Link>
           <Link to="/dashboard/franquiciados" className="nav-item">Franquiciados</Link>
           <Link to="/dashboard/pedidos" className="nav-item">Pedidos</Link>
@@ -55,6 +60,7 @@ function Dashboard({ user }) {
         <div className="dashboard-content">
           <Routes>
             <Route path="/" element={<ResumenDueño user={user} negocio={negocio} />} />
+            <Route path="/metricas" element={<DashboardMetrics />} />
             <Route path="/productos" element={<ProductosListDashboard />} />
             <Route path="/franquiciados" element={<GestionFranquiciados />} />
             <Route path="/pedidos" element={<AdminPanel />} />
@@ -98,6 +104,7 @@ function ProductosListDashboard() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showGestionProductos, setShowGestionProductos] = useState(false);
+  const { showError, showSuccess } = useToast();
 
   useEffect(() => {
     fetchProductos();
@@ -122,6 +129,7 @@ function ProductosListDashboard() {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching productos:', err);
+      showError('Error al cargar productos');
       setLoading(false);
     }
   };
@@ -138,8 +146,9 @@ function ProductosListDashboard() {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchProductos();
+      showSuccess('Producto eliminado exitosamente');
     } catch (err) {
-      alert('Error al eliminar producto');
+      showError('Error al eliminar producto');
     }
   };
 
@@ -193,7 +202,7 @@ function ProductosListDashboard() {
               <h3>{producto.nombre}</h3>
               <p>{producto.descripcion}</p>
               <p><strong>Precio:</strong> ${producto.precio}</p>
-              <p><strong>Stock:</strong> {producto.stock}</p>
+              <p><strong>Tipo:</strong> Para fabricación</p>
               <p><strong>Categoría:</strong> {producto.categoria || 'Sin categoría'}</p>
               <div className="product-actions">
                 <button 
@@ -220,6 +229,7 @@ function ProductosListDashboard() {
 // Componente de resumen para dueños
 function ResumenDueño({ user, negocio }) {
   const navigate = useNavigate();
+  const { showError } = useToast();
   const [stats, setStats] = useState({
     totalProductos: 0,
     totalFranquiciados: 0,
@@ -238,6 +248,7 @@ function ResumenDueño({ user, negocio }) {
         setStats(response.data);
       } catch (err) {
         console.error('Error fetching stats:', err);
+        showError('Error al cargar estadísticas');
       }
     };
 
@@ -322,6 +333,7 @@ function ResumenDueño({ user, negocio }) {
 function MisPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { showError } = useToast();
 
   useEffect(() => {
     const fetchPedidos = async () => {
@@ -335,6 +347,7 @@ function MisPedidos() {
         setLoading(false);
       } catch (err) {
         console.error('Error fetching pedidos:', err);
+        showError('Error al cargar pedidos');
         setLoading(false);
       }
     };

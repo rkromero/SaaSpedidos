@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext';
 import './NuevoPedido.css';
 
 function NuevoPedido({ onPedidoCreado, onCancelar }) {
@@ -8,6 +9,7 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
   const [notas, setNotas] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     fetchProductos();
@@ -24,6 +26,7 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching productos:', err);
+      showError('Error al cargar productos');
       setLoading(false);
     }
   };
@@ -35,7 +38,7 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
       // Si ya existe, aumentar cantidad
       setPedidoItems(pedidoItems.map(item =>
         item.productoId === producto.id
-          ? { ...item, cantidad: Math.min(item.cantidad + 1, producto.stock) }
+          ? { ...item, cantidad: item.cantidad + 1 }
           : item
       ));
     } else {
@@ -44,8 +47,7 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
         productoId: producto.id,
         nombre: producto.nombre,
         precio: producto.precio,
-        cantidad: 1,
-        stockDisponible: producto.stock
+        cantidad: 1
       }]);
     }
   };
@@ -55,12 +57,9 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
       // Eliminar producto si cantidad es 0
       setPedidoItems(pedidoItems.filter(item => item.productoId !== productoId));
     } else {
-      const producto = productos.find(p => p.id === productoId);
-      const cantidadFinal = Math.min(nuevaCantidad, producto.stock);
-      
       setPedidoItems(pedidoItems.map(item =>
         item.productoId === productoId
-          ? { ...item, cantidad: cantidadFinal }
+          ? { ...item, cantidad: nuevaCantidad }
           : item
       ));
     }
@@ -78,7 +77,7 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
     e.preventDefault();
     
     if (pedidoItems.length === 0) {
-      alert('Debes agregar al menos un producto al pedido');
+      showError('Debes agregar al menos un producto al pedido');
       return;
     }
 
@@ -100,10 +99,10 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert('Pedido creado exitosamente');
+      showSuccess('Pedido creado exitosamente');
       if (onPedidoCreado) onPedidoCreado();
     } catch (err) {
-      alert(err.response?.data?.message || 'Error al crear pedido');
+      showError(err.response?.data?.message || 'Error al crear pedido');
     } finally {
       setSubmitting(false);
     }
@@ -124,20 +123,17 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
         <div className="productos-section">
           <h3>Productos Disponibles</h3>
           <div className="productos-grid">
-            {productos.filter(p => p.activo && p.stock > 0).map((producto) => (
+            {productos.filter(p => p.activo).map((producto) => (
               <div key={producto.id} className="producto-card">
                 <div className="producto-info">
                   <h4>{producto.nombre}</h4>
                   <p>{producto.descripcion}</p>
                   <p className="precio">${producto.precio}</p>
-                  <p className="stock">Stock: {producto.stock}</p>
+                  <p className="fabricacion">Para fabricación</p>
                 </div>
                 <button 
                   className="btn btn-primary btn-small"
                   onClick={() => agregarProducto(producto)}
-                  disabled={
-                    pedidoItems.find(item => item.productoId === producto.id)?.cantidad >= producto.stock
-                  }
                 >
                   Agregar
                 </button>
@@ -173,7 +169,6 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
                       <button 
                         className="btn-quantity"
                         onClick={() => cambiarCantidad(item.productoId, item.cantidad + 1)}
-                        disabled={item.cantidad >= item.stockDisponible}
                       >
                         +
                       </button>

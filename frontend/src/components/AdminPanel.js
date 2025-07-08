@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from '../contexts/ToastContext';
 
 function AdminPanel() {
   const [pedidos, setPedidos] = useState([]);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pedidos');
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     fetchData();
@@ -30,6 +32,7 @@ function AdminPanel() {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching data:', err);
+      showError('Error al cargar los datos');
       setLoading(false);
     }
   };
@@ -43,8 +46,9 @@ function AdminPanel() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchData();
+      showSuccess('Estado del pedido actualizado exitosamente');
     } catch (err) {
-      alert('Error al cambiar estado del pedido');
+      showError('Error al cambiar estado del pedido');
     }
   };
 
@@ -104,12 +108,9 @@ function AdminPanel() {
                     value={pedido.estado} 
                     onChange={(e) => cambiarEstadoPedido(pedido.id, e.target.value)}
                   >
-                    <option value="PENDIENTE">Pendiente</option>
-                    <option value="CONFIRMADO">Confirmado</option>
-                    <option value="EN_PREPARACION">En Preparación</option>
-                    <option value="ENVIADO">Enviado</option>
+                    <option value="NUEVO_PEDIDO">Nuevo Pedido</option>
+                    <option value="EN_FABRICACION">En Fabricación</option>
                     <option value="ENTREGADO">Entregado</option>
-                    <option value="CANCELADO">Cancelado</option>
                   </select>
                 </div>
               </div>
@@ -129,7 +130,7 @@ function AdminPanel() {
                 <h4>{producto.nombre}</h4>
                 <p>{producto.descripcion}</p>
                 <p><strong>Precio:</strong> ${producto.precio}</p>
-                <p><strong>Stock:</strong> {producto.stock}</p>
+                <p><strong>Tipo:</strong> Para fabricación</p>
                 <p><strong>Categoría:</strong> {producto.categoria || 'Sin categoría'}</p>
                 <p><strong>Peso:</strong> {producto.peso ? `${producto.peso} kg` : 'N/A'}</p>
                 <p><strong>Estado:</strong> {producto.activo ? 'Activo' : 'Inactivo'}</p>
