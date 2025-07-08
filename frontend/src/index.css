@@ -195,10 +195,11 @@
 
   /* Content area principal */
   .main-content {
-    @apply flex-1 overflow-y-auto;
+    flex: 1;
+    overflow-y: auto;
     background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    height: calc(100vh - auto - 85px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    padding-bottom: calc(85px + env(safe-area-inset-bottom));
+    height: calc(100vh - 70px - 85px);
+    padding-bottom: 85px;
     padding-top: 20px;
     animation: fadeInUp 0.5s ease-out;
   }
@@ -474,10 +475,12 @@
 
   /* Enhanced Tab Bar Styles */
   .enhanced-tab-bar {
-    @apply fixed bottom-0 left-0 right-0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
-    height: calc(85px + env(safe-area-inset-bottom));
-    padding-bottom: env(safe-area-inset-bottom);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 1) 100%);
+    height: 85px;
     backdrop-filter: blur(20px);
     box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.1);
     border-top: 1px solid rgba(0, 0, 0, 0.05);
@@ -485,7 +488,9 @@
   }
 
   .tab-indicator {
-    @apply absolute top-0 transition-all duration-300 ease-out;
+    position: absolute;
+    top: 0;
+    transition: all 0.3s ease-out;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     height: 3px;
     border-radius: 0 0 6px 6px;
@@ -493,16 +498,29 @@
   }
 
   .tab-container {
-    @apply flex h-full items-center;
+    display: flex;
+    height: 100%;
+    align-items: center;
   }
 
   .tab-item {
-    @apply relative flex-1 flex flex-col items-center justify-center py-2 px-1 transition-all duration-200;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    transition: all 0.2s ease;
     min-height: 60px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
   }
 
   .tab-item:not(.active) {
-    @apply text-gray-400;
+    color: #9ca3af;
     transition: all 0.3s ease;
   }
 
@@ -512,15 +530,18 @@
   }
 
   .tab-item:active {
-    @apply scale-95;
+    transform: scale(0.95);
   }
 
   .tab-icon-container {
-    @apply relative mb-1;
+    position: relative;
+    margin-bottom: 4px;
   }
 
   .tab-icon {
-    @apply w-6 h-6 transition-all duration-200;
+    width: 24px;
+    height: 24px;
+    transition: all 0.2s ease;
   }
 
   .tab-icon.active {
@@ -530,32 +551,54 @@
   }
 
   .tab-badge {
-    @apply absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: #ef4444;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .tab-badge-text {
-    @apply text-white text-xs font-bold;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
   }
 
   .tab-label {
-    @apply text-xs font-medium transition-all duration-200;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
   }
 
   .tab-item.active .tab-label {
-    @apply font-semibold;
+    font-weight: 600;
   }
 
   .tab-ripple {
-    @apply absolute inset-0 rounded-lg opacity-0 bg-primary-100;
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    opacity: 0;
+    background: rgba(102, 126, 234, 0.1);
     transition: opacity 0.15s ease-out;
   }
 
   .tab-item:active .tab-ripple {
-    @apply opacity-100;
+    opacity: 1;
   }
 
   .tab-shadow {
-    @apply absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e5e7eb, transparent);
   }
 
   /* Dark mode support */
@@ -641,30 +684,7 @@
     @apply text-red-400 hover:bg-red-900;
   }
 
-  .enhanced-tab-bar {
-    @apply bg-gray-900 border-gray-700;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-  }
 
-  .tab-item:not(.active) {
-    @apply text-gray-400;
-  }
-
-  .tab-item.active {
-    @apply text-primary-400;
-  }
-
-  .tab-icon.active {
-    @apply text-primary-400;
-  }
-
-  .tab-ripple {
-    @apply bg-primary-900;
-  }
-
-  .tab-shadow {
-    @apply bg-gradient-to-r from-transparent via-gray-700 to-transparent;
-  }
 }
 
 @layer base {

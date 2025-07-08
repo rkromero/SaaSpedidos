@@ -1,79 +1,58 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useNavigation } from '../../contexts/NavigationContext';
-import { useHaptics } from '../../hooks/useHaptics';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const EnhancedTabBar = ({ user }) => {
   const location = useLocation();
-  const { navigateTo } = useNavigation();
-  const { light: playHapticFeedback } = useHaptics();
+  const navigate = useNavigate();
   const [activeTabIndicator, setActiveTabIndicator] = useState({ width: 0, left: 0 });
 
-  // Configuración de pestañas basada en el rol del usuario
-  const getTabItems = () => {
-    const baseItems = [
-      { 
-        id: 'dashboard', 
-        label: 'Inicio', 
-        path: '/dashboard',
-        icon: 'home',
-        roles: ['DUEÑO', 'FRANQUICIADO', 'EMPLEADO', 'DUEÑO_NEGOCIO']
-      },
-      {
-        id: 'productos',
-        label: 'Productos',
-        path: '/dashboard/productos',
-        icon: 'package',
-        roles: ['DUEÑO', 'FRANQUICIADO', 'EMPLEADO', 'DUEÑO_NEGOCIO']
-      },
-      {
-        id: 'pedidos',
-        label: 'Pedidos',
-        path: '/dashboard/pedidos',
-        icon: 'clipboard',
-        roles: ['DUEÑO', 'FRANQUICIADO', 'EMPLEADO', 'DUEÑO_NEGOCIO']
-      },
-      {
-        id: 'carrito',
-        label: 'Carrito',
-        path: '/carrito',
-        icon: 'cart',
-        roles: ['FRANQUICIADO', 'EMPLEADO'],
-        badge: 3 // Ejemplo de badge
-      }
-    ];
-
-    // Agregar pestaña de admin para dueños de negocio
-    if (user?.rol === 'DUEÑO' || user?.rol === 'DUEÑO_NEGOCIO' || user?.tipo === 'DUEÑO') {
-      baseItems.push({
-        id: 'admin',
-        label: 'Admin',
-        path: '/admin',
-        icon: 'settings',
-        roles: ['DUEÑO', 'DUEÑO_NEGOCIO']
-      });
+  // Pestañas simplificadas que siempre se muestran
+  const tabItems = [
+    { 
+      id: 'dashboard', 
+      label: 'Inicio', 
+      path: '/dashboard',
+      icon: 'home'
+    },
+    {
+      id: 'productos',
+      label: 'Productos',
+      path: '/dashboard/productos',
+      icon: 'package'
+    },
+    {
+      id: 'pedidos',
+      label: 'Pedidos',
+      path: '/dashboard/pedidos',
+      icon: 'clipboard'
+    },
+    {
+      id: 'carrito',
+      label: 'Carrito',
+      path: '/carrito',
+      icon: 'cart',
+      badge: 3
+    },
+    {
+      id: 'admin',
+      label: 'Admin',
+      path: '/admin',
+      icon: 'settings'
     }
-
-    return baseItems.filter(item => 
-      item.roles.includes(user?.rol) || item.roles.includes(user?.tipo)
-    );
-  };
-
-  const tabItems = getTabItems();
+  ];
 
   // Verificar si una pestaña está activa
-  const isActive = useCallback((path) => {
+  const isActive = (path) => {
     if (path === '/dashboard') {
       return location.pathname === '/dashboard' || location.pathname === '/dashboard/';
     }
     return location.pathname.startsWith(path);
-  }, [location.pathname]);
+  };
 
   // Manejar click en pestaña
   const handleTabClick = (item) => {
     if (!isActive(item.path)) {
-      playHapticFeedback();
-      navigateTo(item.path);
+      navigate(item.path);
     }
   };
 
@@ -132,7 +111,7 @@ const EnhancedTabBar = ({ user }) => {
         left: activeIndex * tabWidth
       });
     }
-  }, [location.pathname, tabItems, isActive]);
+  }, [location.pathname]);
 
   return (
     <div className="enhanced-tab-bar">
@@ -155,7 +134,6 @@ const EnhancedTabBar = ({ user }) => {
               key={item.id}
               onClick={() => handleTabClick(item)}
               className={`tab-item ${active ? 'active' : ''}`}
-              disabled={active}
             >
               {/* Icono con badge opcional */}
               <div className="tab-icon-container">
