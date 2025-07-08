@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './components/Landing';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
@@ -10,11 +10,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Carrito from './components/Carrito';
 import AdminPanel from './components/AdminPanel';
 import OfflineNotification from './components/native/OfflineNotification';
-import InstallPWAButton from './components/native/InstallPWAButton';
 import EnhancedLayout from './components/navigation/EnhancedLayout';
-import { usePWA } from './hooks/usePWA';
-import { useSwipeGesture } from './hooks/useGestures';
-import { useHaptics } from './hooks/useHaptics';
 import './App.css';
 
 // Los componentes antiguos se han movido a EnhancedLayout

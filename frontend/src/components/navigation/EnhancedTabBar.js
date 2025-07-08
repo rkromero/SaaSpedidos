@@ -130,7 +130,7 @@ const EnhancedTabBar = ({ user }) => {
         left: activeIndex * tabWidth
       });
     }
-  }, [location.pathname, tabItems]);
+  }, [location.pathname, tabItems, isActive]);
 
   return (
     <div className="enhanced-tab-bar">

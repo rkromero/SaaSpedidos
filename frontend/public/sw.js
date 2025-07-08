@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals, no-undef */
 const CACHE_NAME = 'saas-pedidos-v1';
 const urlsToCache = [
   '/',
@@ -37,6 +38,16 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Ignorar requests de extensiones de Chrome y esquemas no soportados
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
+  // Ignorar requests de extensiones de Chrome específicamente
+  if (url.protocol === 'chrome-extension:' || url.protocol === 'moz-extension:') {
+    return;
+  }
+
   // API calls - Network First
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
@@ -46,7 +57,9 @@ self.addEventListener('fetch', (event) => {
           if (request.method === 'GET' && response.status === 200) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseClone);
+              cache.put(request, responseClone).catch(() => {
+                // Silenciar errores de cache
+              });
             });
           }
           return response;
@@ -73,7 +86,9 @@ self.addEventListener('fetch', (event) => {
             }
             const responseToCache = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache);
+              cache.put(request, responseToCache).catch(() => {
+                // Silenciar errores de cache
+              });
             });
             return response;
           });
