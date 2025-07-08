@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './GestionProductos.css';
 
-function GestionProductos() {
+function GestionProductos({ onProductoCreated }) {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -48,6 +48,8 @@ function GestionProductos() {
       const baseURL = process.env.REACT_APP_API_URL || '';
       const token = localStorage.getItem('token');
       
+      const isCreating = !editingId;
+      
       if (editingId) {
         await axios.put(`${baseURL}/api/productos/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
@@ -60,6 +62,11 @@ function GestionProductos() {
       
       fetchProductos();
       resetForm();
+      
+      // Si se está creando un producto y hay callback, ejecutarlo
+      if (isCreating && onProductoCreated) {
+        onProductoCreated();
+      }
     } catch (err) {
       alert(err.response?.data?.message || 'Error al guardar producto');
     }

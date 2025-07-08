@@ -98,6 +98,14 @@ function ProductosListDashboard() {
 
   useEffect(() => {
     fetchProductos();
+    
+    // Verificar si se debe mostrar el formulario automáticamente
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'add') {
+      setShowGestionProductos(true);
+      // Limpiar el parámetro de la URL
+      window.history.replaceState({}, '', '/dashboard/productos');
+    }
   }, []);
 
   const fetchProductos = async () => {
@@ -143,7 +151,12 @@ function ProductosListDashboard() {
         >
           ← Volver a Lista
         </button>
-        <GestionProductos />
+        <GestionProductos 
+          onProductoCreated={() => {
+            setShowGestionProductos(false);
+            fetchProductos();
+          }}
+        />
       </div>
     );
   }
@@ -227,6 +240,11 @@ function ResumenDueño({ user, negocio }) {
     fetchStats();
   }, []);
 
+  const handleAgregarProducto = () => {
+    // Navegar a productos y agregar parámetro para mostrar formulario
+    window.location.href = '/dashboard/productos?action=add';
+  };
+
   return (
     <div className="resumen">
       <h2>Resumen del Negocio</h2>
@@ -268,11 +286,11 @@ function ResumenDueño({ user, negocio }) {
       <div className="quick-actions">
         <h3>Acciones Rápidas</h3>
         <div className="actions-grid">
-          <Link to="/dashboard/productos" className="action-card">
+          <div className="action-card" onClick={handleAgregarProducto} style={{cursor: 'pointer'}}>
             <div className="action-icon">➕</div>
             <h4>Agregar Producto</h4>
             <p>Carga un nuevo producto al catálogo</p>
-          </Link>
+          </div>
           
           <Link to="/dashboard/franquiciados" className="action-card">
             <div className="action-icon">👤</div>
