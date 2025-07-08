@@ -11,6 +11,7 @@ import Carrito from './components/Carrito';
 import AdminPanel from './components/AdminPanel';
 import OfflineNotification from './components/native/OfflineNotification';
 import InstallPWAButton from './components/native/InstallPWAButton';
+import EnhancedLayout from './components/navigation/EnhancedLayout';
 import { usePWA } from './hooks/usePWA';
 import { useSwipeGesture } from './hooks/useGestures';
 import { useHaptics } from './hooks/useHaptics';
@@ -250,9 +251,9 @@ function App() {
                 path="/dashboard/*" 
                 element={
                   user ? (
-                    <AuthenticatedLayout user={user} onLogout={handleLogout}>
+                    <EnhancedLayout user={user} onLogout={handleLogout}>
                       <Dashboard user={user} />
-                    </AuthenticatedLayout>
+                    </EnhancedLayout>
                   ) : (
                     <Navigate to="/login" />
                   )
@@ -262,9 +263,9 @@ function App() {
                 path="/carrito" 
                 element={
                   user ? (
-                    <AuthenticatedLayout user={user} onLogout={handleLogout}>
+                    <EnhancedLayout user={user} onLogout={handleLogout}>
                       <Carrito />
-                    </AuthenticatedLayout>
+                    </EnhancedLayout>
                   ) : (
                     <Navigate to="/login" />
                   )
@@ -274,9 +275,9 @@ function App() {
                 path="/admin" 
                 element={
                   user ? (
-                    <AuthenticatedLayout user={user} onLogout={handleLogout}>
+                    <EnhancedLayout user={user} onLogout={handleLogout}>
                       <AdminPanel />
-                    </AuthenticatedLayout>
+                    </EnhancedLayout>
                   ) : (
                     <Navigate to="/login" />
                   )
