@@ -54,7 +54,7 @@ function Dashboard({ user }) {
         <div className="dashboard-content">
           <Routes>
             <Route path="/" element={<ResumenDueño user={user} negocio={negocio} />} />
-            <Route path="/productos" element={<GestionProductos />} />
+            <Route path="/productos" element={<ProductosListDashboard />} />
             <Route path="/franquiciados" element={<GestionFranquiciados />} />
             <Route path="/pedidos" element={<AdminPanel />} />
             <Route path="*" element={<Navigate to="/dashboard" />} />
@@ -80,12 +80,123 @@ function Dashboard({ user }) {
 
       <div className="dashboard-content">
         <Routes>
-          <Route path="/" element={<ProductosList />} />
+          <Route path="/" element={<ProductosListDashboard />} />
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/mis-pedidos" element={<MisPedidos />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </div>
+    </div>
+  );
+}
+
+// Componente para listar productos en el Dashboard
+function ProductosListDashboard() {
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showGestionProductos, setShowGestionProductos] = useState(false);
+
+  useEffect(() => {
+    fetchProductos();
+  }, []);
+
+  const fetchProductos = async () => {
+    try {
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${baseURL}/api/productos/mi-negocio`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProductos(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching productos:', err);
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (id) => {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+      return;
+    }
+    
+    try {
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      const token = localStorage.getItem('token');
+      await axios.delete(`${baseURL}/api/productos/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchProductos();
+    } catch (err) {
+      alert('Error al eliminar producto');
+    }
+  };
+
+  if (loading) return <div className="loading">Cargando productos...</div>;
+
+  if (showGestionProductos) {
+    return (
+      <div>
+        <button 
+          className="btn btn-secondary mb-3"
+          onClick={() => setShowGestionProductos(false)}
+        >
+          ← Volver a Lista
+        </button>
+        <GestionProductos />
+      </div>
+    );
+  }
+
+  return (
+    <div className="productos-dashboard">
+      <div className="header-section">
+        <h2>Gestión de Productos</h2>
+        <button 
+          className="btn btn-primary"
+          onClick={() => setShowGestionProductos(true)}
+        >
+          Agregar Producto
+        </button>
+      </div>
+
+      {productos.length === 0 ? (
+        <div className="empty-state">
+          <p>No tienes productos registrados</p>
+          <button 
+            className="btn btn-primary"
+            onClick={() => setShowGestionProductos(true)}
+          >
+            Agregar tu primer producto
+          </button>
+        </div>
+      ) : (
+        <div className="productos-grid">
+          {productos.map((producto) => (
+            <div key={producto.id} className="producto-card">
+              <h3>{producto.nombre}</h3>
+              <p>{producto.descripcion}</p>
+              <p><strong>Precio:</strong> ${producto.precio}</p>
+              <p><strong>Stock:</strong> {producto.stock}</p>
+              <p><strong>Categoría:</strong> {producto.categoria || 'Sin categoría'}</p>
+              <div className="product-actions">
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => setShowGestionProductos(true)}
+                >
+                  Editar
+                </button>
+                <button 
+                  className="btn btn-danger"
+                  onClick={() => handleDeleteProduct(producto.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -204,27 +315,21 @@ function MisPedidos() {
     fetchPedidos();
   }, []);
 
-  if (loading) return <div>Cargando pedidos...</div>;
+  if (loading) return <div className="loading">Cargando pedidos...</div>;
 
   return (
     <div className="mis-pedidos">
       <h2>Mis Pedidos</h2>
-      
       {pedidos.length === 0 ? (
-        <p>No tienes pedidos aún.</p>
+        <p>No tienes pedidos aún</p>
       ) : (
         <div className="pedidos-list">
           {pedidos.map((pedido) => (
             <div key={pedido.id} className="pedido-card">
-              <div className="pedido-header">
-                <h3>Pedido #{pedido.numero}</h3>
-                <span className={`estado ${pedido.estado.toLowerCase()}`}>
-                  {pedido.estado}
-                </span>
-              </div>
+              <h4>Pedido #{pedido.id}</h4>
+              <p><strong>Estado:</strong> {pedido.estado}</p>
               <p><strong>Total:</strong> ${pedido.total}</p>
-              <p><strong>Fecha:</strong> {new Date(pedido.fechaCreacion).toLocaleDateString()}</p>
-              {pedido.notas && <p><strong>Notas:</strong> {pedido.notas}</p>}
+              <p><strong>Fecha:</strong> {new Date(pedido.fechaPedido).toLocaleDateString()}</p>
             </div>
           ))}
         </div>
