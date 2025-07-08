@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useToast } from '../contexts/ToastContext';
+import { useHaptics } from '../hooks/useHaptics';
 import './Toast.css';
 
 const Toast = ({ toast }) => {
   const { removeToast } = useToast();
+  const haptics = useHaptics();
 
   const getIcon = (type) => {
     switch (type) {
@@ -20,7 +22,26 @@ const Toast = ({ toast }) => {
     }
   };
 
+  useEffect(() => {
+    // Haptic feedback basado en el tipo
+    switch (toast.type) {
+      case 'success':
+        haptics.success();
+        break;
+      case 'error':
+        haptics.error();
+        break;
+      case 'warning':
+        haptics.medium();
+        break;
+      default:
+        haptics.light();
+        break;
+    }
+  }, [toast.type, haptics]);
+
   const handleClose = () => {
+    haptics.light();
     removeToast(toast.id);
   };
 

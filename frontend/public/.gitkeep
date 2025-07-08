@@ -1,0 +1,14 @@
+# Los iconos PWA deben ser creados por un diseñador
+# Por ahora, usar iconos temporales o generadores online como:
+# - https://realfavicongenerator.net/
+# - https://www.pwabuilder.com/imageGenerator
+# 
+# Iconos necesarios:
+# - favicon.ico (16x16, 32x32, 48x48)
+# - icon-192x192.png
+# - icon-512x512.png  
+# - apple-touch-icon.png (180x180)
+# 
+# Screenshots necesarios:
+# - screenshot1.png (750x1334)
+# - screenshot2.png (1024x768) 

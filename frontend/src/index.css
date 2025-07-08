@@ -345,4 +345,194 @@ button {
 
 input, select, textarea {
   font-family: inherit;
+}
+
+/* Animaciones mejoradas */
+@keyframes springIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Clases de animación */
+.animate-spring-in {
+  animation: springIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.animate-slide-in-down {
+  animation: slideInDown 0.3s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-pulse-gentle {
+  animation: pulse 2s infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Modo reducido de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .reduced-motion *,
+  .reduced-motion *::before,
+  .reduced-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  .high-contrast .btn-ios-primary {
+    background-color: #000000;
+    border: 2px solid #ffffff;
+  }
+  
+  .high-contrast .btn-ios-secondary {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    color: #000000;
+  }
+  
+  .high-contrast .input-ios {
+    border: 2px solid #000000;
+  }
+}
+
+/* Transiciones nativas */
+.page-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.page-transition-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+/* Mejoras para dark mode */
+.dark .animate-shimmer {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.dark .card-ios {
+  @apply bg-gray-800 border-gray-700;
+}
+
+.dark .input-ios {
+  @apply bg-gray-800 border-gray-600 text-gray-100;
+}
+
+.dark .input-ios:focus {
+  @apply border-primary-500 ring-primary-500;
+}
+
+.dark .bottom-nav {
+  @apply bg-gray-900 border-gray-700;
+}
+
+.dark .header-mobile {
+  @apply bg-gray-900 border-gray-700;
+}
+
+.dark .nav-item.active {
+  @apply bg-primary-900 text-primary-400;
+}
+
+.dark .nav-item:not(.active) {
+  @apply text-gray-400;
+}
+
+.dark .toast-ios {
+  @apply bg-gray-800 text-gray-100;
 } 

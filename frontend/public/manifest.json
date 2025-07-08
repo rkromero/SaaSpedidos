@@ -1,81 +1,61 @@
 {
   "name": "SaaS Pedidos",
   "short_name": "SaaS Pedidos",
-  "description": "Aplicación de pedidos para fabricación personalizada",
+  "description": "Sistema completo de gestión de pedidos para franquicias",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#3b82f6",
-  "background_color": "#f9fafb",
+  "background_color": "#ffffff",
   "scope": "/",
-  "categories": ["business", "productivity"],
   "lang": "es",
-  "dir": "ltr",
+  "categories": ["business", "productivity"],
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjQ4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+U1A8L3RleHQ+Cjwvc3ZnPgo=",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9IjI1NiIgeT0iMjgwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5TUDwvdGV4dD4KPC9zdmc+Cg==",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
-    },
-    {
-      "src": "/apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshot1.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshot2.png",
-      "sizes": "1024x768",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
+  "screenshots": [],
+  "features": [
+    "Cross Platform",
+    "Background Sync",
+    "Push Notifications",
+    "Offline Support"
   ],
+  "related_applications": [],
   "prefer_related_applications": false,
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
-  "launch_handler": {
-    "client_mode": "focus-existing"
-  },
+  "edge_side_panel": {},
   "shortcuts": [
     {
-      "name": "Crear Pedido",
-      "short_name": "Nuevo Pedido",
-      "description": "Crear un nuevo pedido rápidamente",
-      "url": "/nuevo-pedido",
+      "name": "Nuevo Pedido",
+      "short_name": "Nuevo",
+      "description": "Crear un nuevo pedido",
+      "url": "/dashboard?action=new-order",
       "icons": [
         {
           "src": "/icon-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          "sizes": "192x192"
         }
       ]
     },
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "Ver métricas y estadísticas",
-      "url": "/dashboard",
+      "name": "Productos",
+      "short_name": "Productos",
+      "description": "Ver productos disponibles",
+      "url": "/dashboard/productos",
       "icons": [
         {
           "src": "/icon-192x192.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          "sizes": "192x192"
         }
       ]
     }

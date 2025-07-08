@@ -9,7 +9,7 @@ function Login({ onLogin }) {
     password: ''
   });
   const [loading, setLoading] = useState(false);
-  const { showToast } = useToast();
+  const { addToast } = useToast();
 
   const handleChange = (e) => {
     setFormData({
@@ -27,10 +27,10 @@ function Login({ onLogin }) {
       const response = await axios.post(`${baseURL}/api/auth/login`, formData);
       
       const { user, token } = response.data;
-      showToast('¡Bienvenido! Sesión iniciada correctamente', 'success');
+      addToast('¡Bienvenido! Sesión iniciada correctamente', 'success');
       onLogin(user, token);
     } catch (err) {
-      showToast(err.response?.data?.message || 'Error al iniciar sesión', 'error');
+      addToast(err.response?.data?.message || 'Error al iniciar sesión', 'error');
     } finally {
       setLoading(false);
     }

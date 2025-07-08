@@ -1,0 +1,10 @@
+# Redirecciones para Single Page Application
+/* /index.html 200
+
+# Asegurar que el service worker se sirva correctamente
+/sw.js /sw.js 200
+  Content-Type: application/javascript
+
+# Asegurar que el manifest se sirva correctamente
+/manifest.json /manifest.json 200
+  Content-Type: application/manifest+json 

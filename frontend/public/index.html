@@ -14,10 +14,8 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
     <!-- Icons -->
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="%PUBLIC_URL%/icon-192x192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="%PUBLIC_URL%/icon-512x512.png" />
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9IjE2IiB5PSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5TPC90ZXh0Pgo8L3N2Zz4K" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiBmaWxsPSIjM0I4MkY2Ii8+Cjx0ZXh0IHg9IjkwIiB5PSI5NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5TUDwvdGV4dD4KPC9zdmc+Cg==" />
     
     <!-- iOS Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -25,13 +23,16 @@
     <meta name="apple-mobile-web-app-title" content="SaaS Pedidos" />
     <meta name="apple-touch-fullscreen" content="yes" />
     
+    <!-- Dark Mode Support -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    
     <!-- Android Meta Tags -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="SaaS Pedidos" />
     
     <!-- Windows Meta Tags -->
     <meta name="msapplication-TileColor" content="#3b82f6" />
-    <meta name="msapplication-TileImage" content="%PUBLIC_URL%/icon-192x192.png" />
     <meta name="msapplication-navbutton-color" content="#3b82f6" />
     
     <!-- Otros Meta Tags -->
@@ -44,12 +45,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
-    <!-- Splash Screens iOS -->
-    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
-    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
-    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
-    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
-    <link rel="apple-touch-startup-image" href="%PUBLIC_URL%/splash-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+    <!-- Splash Screens iOS - Temporalmente removidas hasta tener imágenes reales -->
     
     <!-- CSS Critical -->
     <style>
@@ -104,6 +100,18 @@
         -moz-osx-font-smoothing: grayscale;
         background-color: #f9fafb;
         overflow-x: hidden;
+      }
+      
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #1f2937;
+          color: #f9fafb;
+        }
+        
+        .loading-splash {
+          background: linear-gradient(135deg, #1f2937, #111827);
+        }
       }
     </style>
     

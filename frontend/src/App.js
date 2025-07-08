@@ -5,9 +5,15 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import ToastContainer from './components/Toast';
 import { ToastProvider } from './contexts/ToastContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 import Carrito from './components/Carrito';
 import AdminPanel from './components/AdminPanel';
+import OfflineNotification from './components/native/OfflineNotification';
+import InstallPWAButton from './components/native/InstallPWAButton';
+import { usePWA } from './hooks/usePWA';
+import { useSwipeGesture } from './hooks/useGestures';
+import { useHaptics } from './hooks/useHaptics';
 import './App.css';
 
 // Componente de navegación inferior
@@ -86,7 +92,7 @@ const MobileHeader = ({ user, onLogout, title }) => {
   return (
     <div className="header-mobile">
       <div className="flex items-center">
-        <h1 className="text-lg font-bold text-gray-900 truncate">
+        <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
           {title || 'SaaS Pedidos'}
         </h1>
       </div>
@@ -95,31 +101,40 @@ const MobileHeader = ({ user, onLogout, title }) => {
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
               <span className="text-white font-semibold text-sm">
                 {user?.nombre?.charAt(0) || 'U'}
               </span>
             </div>
-            <span className="text-sm font-medium text-gray-700 hidden sm:block">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
               {user?.nombre}
             </span>
           </button>
           
           {showMenu && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-ios shadow-ios-lg border border-gray-200 z-50">
-              <div className="p-3 border-b border-gray-100">
-                <p className="font-medium text-gray-900">{user?.nombre}</p>
-                <p className="text-sm text-gray-500">{user?.email}</p>
-                <p className="text-xs text-primary-600 mt-1">{user?.rol}</p>
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-ios shadow-ios-lg border border-gray-200 dark:border-gray-700 z-50">
+              <div className="p-3 border-b border-gray-100 dark:border-gray-700">
+                <p className="font-medium text-gray-900 dark:text-gray-100">{user?.nombre}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
+                <p className="text-xs text-primary-600 dark:text-primary-400 mt-1">{user?.rol}</p>
               </div>
+              
+              {/* Botón para instalar PWA */}
+              <div className="p-3 border-b border-gray-100 dark:border-gray-700">
+                <InstallPWAButton 
+                  text="Instalar App"
+                  className="w-full text-sm"
+                />
+              </div>
+              
               <button
                 onClick={() => {
                   setShowMenu(false);
                   onLogout();
                 }}
-                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 transition-colors"
               >
                 Cerrar Sesión
               </button>
@@ -212,66 +227,71 @@ function App() {
   }
 
   return (
-    <ToastProvider>
-      <Router>
-        <div className="App h-screen-ios overflow-hidden">
-          <Routes>
-            {/* Rutas públicas */}
-            <Route 
-              path="/" 
-              element={user ? <Navigate to="/dashboard" /> : <Landing />} 
-            />
-            <Route 
-              path="/login" 
-              element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} 
-            />
+    <ThemeProvider>
+      <ToastProvider>
+        <Router>
+          <div className="App h-screen-ios overflow-hidden">
+            {/* Notificación offline */}
+            <OfflineNotification />
             
-            {/* Rutas autenticadas */}
-            <Route 
-              path="/dashboard/*" 
-              element={
-                user ? (
-                  <AuthenticatedLayout user={user} onLogout={handleLogout}>
-                    <Dashboard user={user} />
-                  </AuthenticatedLayout>
-                ) : (
-                  <Navigate to="/login" />
-                )
-              } 
-            />
-            <Route 
-              path="/carrito" 
-              element={
-                user ? (
-                  <AuthenticatedLayout user={user} onLogout={handleLogout}>
-                    <Carrito />
-                  </AuthenticatedLayout>
-                ) : (
-                  <Navigate to="/login" />
-                )
-              } 
-            />
-            <Route 
-              path="/admin" 
-              element={
-                user ? (
-                  <AuthenticatedLayout user={user} onLogout={handleLogout}>
-                    <AdminPanel />
-                  </AuthenticatedLayout>
-                ) : (
-                  <Navigate to="/login" />
-                )
-              } 
-            />
+            <Routes>
+              {/* Rutas públicas */}
+              <Route 
+                path="/" 
+                element={user ? <Navigate to="/dashboard" /> : <Landing />} 
+              />
+              <Route 
+                path="/login" 
+                element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} 
+              />
+              
+              {/* Rutas autenticadas */}
+              <Route 
+                path="/dashboard/*" 
+                element={
+                  user ? (
+                    <AuthenticatedLayout user={user} onLogout={handleLogout}>
+                      <Dashboard user={user} />
+                    </AuthenticatedLayout>
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                } 
+              />
+              <Route 
+                path="/carrito" 
+                element={
+                  user ? (
+                    <AuthenticatedLayout user={user} onLogout={handleLogout}>
+                      <Carrito />
+                    </AuthenticatedLayout>
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  user ? (
+                    <AuthenticatedLayout user={user} onLogout={handleLogout}>
+                      <AdminPanel />
+                    </AuthenticatedLayout>
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                } 
+              />
+              
+              {/* Redirección por defecto */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
             
-            {/* Redirección por defecto */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-          
-          <ToastContainer />
-        </div>
-      </Router>
-    </ToastProvider>
+            <ToastContainer />
+          </div>
+        </Router>
+      </ToastProvider>
+    </ThemeProvider>
   );
 }
 

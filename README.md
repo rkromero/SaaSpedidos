@@ -1,192 +1,268 @@
-# Sistema de Pedidos SaaS
+# SaaS Pedidos - Sistema de Gestión de Pedidos para Franquicias
 
-Un sistema completo para gestionar pedidos donde puedes crear espacios, cargar productos y recibir pedidos de usuarios.
+## 🚀 Funcionalidades Nativas Implementadas
 
-## 🚀 Características
+### 🎯 **Experiencia Nativa Completa**
+- **Gestos táctiles**: Swipe, pull-to-refresh, long press, drag & drop
+- **Haptic feedback**: Vibración contextual en acciones, confirmaciones y errores
+- **Animaciones nativas**: Spring animations, micro-interacciones, transiciones de página
+- **Loading states**: Skeleton screens, progressive loading, shimmer effects
+- **Dark mode**: Auto-detección, toggle suave, persistencia de preferencias
+- **PWA completa**: Instalación, notificaciones push, offline support
 
-- **Espacios/Tiendas**: Crea múltiples espacios para diferentes negocios
-- **Gestión de Productos**: Agrega productos con precios, stock y categorías
-- **Carrito de Compras**: Los usuarios pueden agregar productos al carrito
-- **Sistema de Pedidos**: Procesamiento completo de pedidos
-- **Panel de Administración**: Gestiona espacios, productos y ve pedidos
-- **Interfaz Moderna**: Diseño responsive con Material-UI
+### 📱 **Componentes Nativos**
 
-## 🛠️ Tecnologías
+#### **Gestos y Interacciones**
+- `useSwipeGesture`: Detección de swipes left/right
+- `usePullToRefresh`: Pull-to-refresh con threshold personalizable
+- `useLongPress`: Long press con delay configurable
+- `useHaptics`: Feedback háptico (light, medium, heavy, success, error)
 
-- **Frontend**: React + Material-UI
-- **Backend**: Node.js + Express
-- **Base de Datos**: PostgreSQL (Railway)
-- **ORM**: Prisma
+#### **Componentes UI**
+- `NativeButton`: Botón con haptic feedback y animaciones
+- `NativeInput`: Input con validación en tiempo real y feedback visual
+- `ActionSheet`: Menú contextual estilo iOS
+- `NativeModal`: Modal con animaciones y soporte para gestos
+- `PullToRefresh`: Componente pull-to-refresh nativo
+- `SkeletonScreen`: Loading states con shimmer effects
+- `LoadingSpinner`: Spinner nativo con variantes
 
-## 📋 Requisitos Previos
+#### **PWA y Offline**
+- `usePWA`: Hook para instalación y notificaciones
+- `useNetworkStatus`: Detección de conexión y velocidad
+- `OfflineNotification`: Notificación de estado offline
+- `InstallPWAButton`: Botón de instalación PWA
+- Service Worker con cache inteligente
 
-- Node.js (versión 16 o superior)
-- npm o yarn
-- Cuenta en Railway para la base de datos PostgreSQL
+### 🎨 **Tema y Accesibilidad**
+- **ThemeProvider**: Contexto para dark mode con auto-detección
+- **Modo reducido**: Respeta `prefers-reduced-motion`
+- **Alto contraste**: Soporte para `prefers-contrast: high`
+- **Focus trap**: Navegación por teclado en modales
+- **Screen reader**: Soporte para lectores de pantalla
 
-## 🔧 Instalación
+### ⚡ **Optimizaciones de Performance**
+- Lazy loading de componentes
+- Memoización con React.memo
+- Virtual scrolling para listas largas
+- Bundle splitting automático
+- Service Worker con cache estratégico
 
-### 1. Clonar el repositorio
+## 🛠️ Configuración y Desarrollo
+
+### **Instalación**
 ```bash
-git clone <tu-repositorio>
-cd SaaSPedidos
-```
-
-### 2. Configurar la base de datos
-
-1. Ve a [Railway](https://railway.app/) y crea una cuenta
-2. Crea un nuevo proyecto
-3. Agrega una base de datos PostgreSQL
-4. Copia la URL de conexión
-
-### 3. Configurar variables de entorno
-
-Crea un archivo `.env` en la raíz del proyecto:
-
-```env
-DATABASE_URL="postgresql://usuario:password@host:puerto/database"
-PORT=3001
-```
-
-### 4. Instalar dependencias del backend
-```bash
+# Instalar dependencias
 npm install
-```
 
-### 5. Configurar la base de datos
-```bash
-npx prisma generate
-npx prisma db push
-```
-
-### 6. Instalar dependencias del frontend
-```bash
-cd frontend
-npm install
-```
-
-## 🚀 Ejecutar el proyecto
-
-### Backend
-```bash
-# Desde la raíz del proyecto
+# Iniciar desarrollo
 npm start
+
+# Build para producción
+npm run build
 ```
 
-### Frontend
-```bash
-# Desde la carpeta frontend
-cd frontend
-npm start
+### **Estructura de Archivos**
+```
+src/
+├── hooks/
+│   ├── useGestures.js      # Gestos táctiles
+│   ├── useHaptics.js       # Feedback háptico
+│   ├── useDarkMode.js      # Dark mode
+│   └── usePWA.js          # PWA features
+├── components/
+│   └── native/
+│       ├── NativeButton.js    # Botón nativo
+│       ├── NativeInput.js     # Input nativo
+│       ├── ActionSheet.js     # Action sheet
+│       ├── NativeModal.js     # Modal nativo
+│       ├── PullToRefresh.js   # Pull to refresh
+│       ├── SkeletonScreen.js  # Skeleton loading
+│       └── LoadingSpinner.js  # Loading spinner
+├── contexts/
+│   ├── ThemeContext.js     # Contexto de tema
+│   └── ToastContext.js     # Contexto de toasts
+└── public/
+    ├── sw.js              # Service Worker
+    └── manifest.json      # PWA Manifest
 ```
 
-El backend estará disponible en `http://localhost:3001`
-El frontend estará disponible en `http://localhost:3000`
+### **Uso de Componentes**
 
-## 📖 Uso del Sistema
-
-### Para Administradores
-
-1. **Crear Espacios**: Ve al panel de administración y crea espacios para tus negocios
-2. **Agregar Productos**: Selecciona un espacio y agrega productos con precios y stock
-3. **Ver Pedidos**: Revisa todos los pedidos recibidos en tiempo real
-
-### Para Usuarios
-
-1. **Ver Espacios**: Navega por los espacios disponibles
-2. **Seleccionar Productos**: Agrega productos al carrito
-3. **Realizar Pedido**: Completa tus datos y confirma el pedido
-
-## 🗄️ Estructura de la Base de Datos
-
-### Modelos principales:
-
-- **Espacio**: Representa una tienda o negocio
-- **Producto**: Productos disponibles en cada espacio
-- **Usuario**: Clientes que realizan pedidos
-- **Pedido**: Pedidos realizados por los usuarios
-- **DetallePedido**: Detalles de cada pedido (productos y cantidades)
-
-## 🔌 API Endpoints
-
-### Espacios
-- `GET /api/espacios` - Obtener todos los espacios
-- `POST /api/espacios` - Crear nuevo espacio
-
-### Productos
-- `GET /api/productos/:espacioId` - Obtener productos de un espacio
-- `POST /api/productos` - Crear nuevo producto
-
-### Usuarios
-- `POST /api/usuarios` - Crear nuevo usuario
-
-### Pedidos
-- `POST /api/pedidos` - Crear nuevo pedido
-- `GET /api/pedidos/:espacioId` - Obtener pedidos de un espacio
-- `PATCH /api/pedidos/:id/estado` - Actualizar estado del pedido
-
-## 🎨 Personalización
-
-### Temas y Colores
-Puedes personalizar los colores editando el tema en `frontend/src/App.js`:
-
+#### **Gestos Táctiles**
 ```javascript
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#1976d2', // Color principal
-    },
-    secondary: {
-      main: '#dc004e', // Color secundario
-    },
-  },
-});
+import { useSwipeGesture, useLongPress } from '../hooks/useGestures';
+
+const MyComponent = () => {
+  const swipeGesture = useSwipeGesture(
+    () => console.log('Swipe left'),
+    () => console.log('Swipe right')
+  );
+
+  const longPressGesture = useLongPress(
+    () => console.log('Long press'),
+    500 // delay en ms
+  );
+
+  return (
+    <div {...swipeGesture} {...longPressGesture}>
+      Contenido con gestos
+    </div>
+  );
+};
 ```
 
-### Configuración de la API
-Modifica la URL base de la API en los componentes del frontend:
-
+#### **Haptic Feedback**
 ```javascript
-const API_BASE_URL = 'http://localhost:3001/api';
+import { useHaptics } from '../hooks/useHaptics';
+
+const MyComponent = () => {
+  const haptics = useHaptics();
+
+  const handleClick = () => {
+    haptics.success(); // light, medium, heavy, success, error
+  };
+
+  return <button onClick={handleClick}>Button</button>;
+};
 ```
 
-## 🚀 Despliegue
+#### **Componentes Nativos**
+```javascript
+import NativeButton from '../components/native/NativeButton';
+import NativeInput from '../components/native/NativeInput';
 
-### Backend en Railway
-1. Conecta tu repositorio a Railway
-2. Configura las variables de entorno
-3. Railway detectará automáticamente que es una aplicación Node.js
+const MyForm = () => {
+  return (
+    <div>
+      <NativeInput
+        label="Email"
+        type="email"
+        placeholder="tu@email.com"
+        clearable
+        hapticFeedback="light"
+      />
+      
+      <NativeButton
+        onClick={handleSubmit}
+        variant="primary"
+        hapticFeedback="medium"
+        icon={<span>📧</span>}
+      >
+        Enviar
+      </NativeButton>
+    </div>
+  );
+};
+```
 
-### Frontend en Vercel/Netlify
-1. Conecta tu repositorio a Vercel o Netlify
-2. Configura el directorio de build como `frontend`
-3. Actualiza la URL de la API en el frontend
+### **PWA Features**
+```javascript
+import { usePWA } from '../hooks/usePWA';
+import InstallPWAButton from '../components/native/InstallPWAButton';
 
-## 🤝 Contribuir
+const MyApp = () => {
+  const { isInstalled, isOnline, requestNotificationPermission } = usePWA();
 
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+  return (
+    <div>
+      {!isInstalled && <InstallPWAButton />}
+      <div>Estado: {isOnline ? 'Conectado' : 'Offline'}</div>
+    </div>
+  );
+};
+```
 
-## 📝 Licencia
+## 🎯 **Características Destacadas**
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles.
+### **Experiencia Móvil Nativa**
+- **Safe area**: Soporte completo para iPhone X+ y Android
+- **Viewport fit**: Optimización para pantallas con notch
+- **Touch targets**: Tamaños mínimos de 44px para accesibilidad
+- **Smooth scrolling**: Scroll suave y optimizado
 
-## 🆘 Soporte
+### **Animaciones Avanzadas**
+- **Spring animations**: Animaciones con efecto resorte
+- **Micro-interactions**: Feedback visual en todas las interacciones
+- **Page transitions**: Transiciones suaves entre páginas
+- **Reduced motion**: Respeta preferencias de accesibilidad
 
-Si tienes problemas o preguntas:
+### **Optimización de Performance**
+- **Bundle splitting**: Carga bajo demanda
+- **Image optimization**: Lazy loading y compresión
+- **Memory management**: Cleanup automático de listeners
+- **Virtual scrolling**: Para listas con miles de elementos
 
-1. Revisa los issues existentes
-2. Crea un nuevo issue con detalles del problema
-3. Incluye logs de error y pasos para reproducir el problema
+## 📖 **Guía de Uso**
 
-## 🔄 Próximas Características
+### **Instalación PWA**
+1. Abrir la aplicación en un navegador compatible
+2. Buscar el botón "Instalar App" en el menú
+3. Seguir las instrucciones del navegador
 
-- [ ] Notificaciones por email
-- [ ] Sistema de autenticación
-- [ ] Dashboard con estadísticas
-- [ ] Gestión de inventario automática
-- [ ] Múltiples métodos de pago
-- [ ] App móvil 
+### **Gestos Disponibles**
+- **Swipe horizontal**: Navegación entre secciones
+- **Pull to refresh**: Actualizar datos
+- **Long press**: Menús contextuales
+- **Tap**: Selección con haptic feedback
+
+### **Accesibilidad**
+- **Screen readers**: Soporte completo
+- **Keyboard navigation**: Navegación por teclado
+- **High contrast**: Modo alto contraste
+- **Focus visible**: Indicadores de foco claros
+
+## 🔧 **Configuración Avanzada**
+
+### **Personalización de Tema**
+```javascript
+import { ThemeProvider } from './contexts/ThemeContext';
+
+const App = () => {
+  return (
+    <ThemeProvider>
+      <MyApp />
+    </ThemeProvider>
+  );
+};
+```
+
+### **Service Worker**
+El Service Worker está configurado para:
+- Cache de assets estáticos
+- Cache de API responses
+- Offline fallbacks
+- Background sync
+
+### **Notificaciones Push**
+```javascript
+const { requestNotificationPermission, showNotification } = usePWA();
+
+const enableNotifications = async () => {
+  const granted = await requestNotificationPermission();
+  if (granted) {
+    showNotification('Título', {
+      body: 'Mensaje de notificación',
+      icon: '/icon-192x192.png'
+    });
+  }
+};
+```
+
+## 🚀 **Próximas Mejoras**
+
+### **En Desarrollo**
+- Soporte para iOS shortcuts
+- Widgets para Android
+- Sincronización en background
+- Notificaciones push avanzadas
+
+### **Planificado**
+- Soporte para Apple Watch
+- Integración con Siri Shortcuts
+- Modo offline completo
+- Exportación de datos
+
+---
+
+**Desarrollado con ❤️ para una experiencia móvil nativa completa** 
