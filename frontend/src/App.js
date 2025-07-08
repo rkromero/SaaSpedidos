@@ -4,8 +4,7 @@ import Landing from './components/Landing';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Header from './components/Header';
-import EspaciosList from './components/EspaciosList';
-import ProductosList from './components/ProductosList';
+
 import Carrito from './components/Carrito';
 import AdminPanel from './components/AdminPanel';
 import './App.css';
@@ -50,8 +49,6 @@ function App() {
             <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
             <Route path="/dashboard/*" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-            <Route path="/espacios" element={<EspaciosList />} />
-            <Route path="/espacios/:espacioId/productos" element={<ProductosList />} />
             <Route path="/carrito" element={<Carrito />} />
             <Route path="/admin" element={<AdminPanel />} />
             <Route path="*" element={<Navigate to="/" />} />
