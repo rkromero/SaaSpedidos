@@ -5,6 +5,8 @@ import Carrito from './Carrito';
 import AdminPanel from './AdminPanel';
 import GestionProductos from './GestionProductos';
 import GestionFranquiciados from './GestionFranquiciados';
+import ProductosListFranquiciado from './ProductosListFranquiciado';
+import NuevoPedido from './NuevoPedido';
 import './Dashboard.css';
 
 function Dashboard({ user }) {
@@ -73,13 +75,15 @@ function Dashboard({ user }) {
 
       <div className="dashboard-nav">
         <Link to="/dashboard" className="nav-item">Productos</Link>
-        <Link to="/dashboard/carrito" className="nav-item">Carrito</Link>
+        <Link to="/dashboard/nuevo-pedido" className="nav-item">📝 Nuevo Pedido</Link>
         <Link to="/dashboard/mis-pedidos" className="nav-item">Mis Pedidos</Link>
+        <Link to="/dashboard/carrito" className="nav-item">Carrito</Link>
       </div>
 
       <div className="dashboard-content">
         <Routes>
-          <Route path="/" element={<ProductosListDashboard />} />
+          <Route path="/" element={<ProductosListFranquiciado />} />
+          <Route path="/nuevo-pedido" element={<NuevoPedidoWrapper />} />
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/mis-pedidos" element={<MisPedidos />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
@@ -358,6 +362,18 @@ function MisPedidos() {
         </div>
       )}
     </div>
+  );
+}
+
+// Wrapper para NuevoPedido en el dashboard de franquiciados
+function NuevoPedidoWrapper() {
+  const navigate = useNavigate();
+  
+  return (
+    <NuevoPedido 
+      onPedidoCreado={() => navigate('/dashboard/mis-pedidos')}
+      onCancelar={() => navigate('/dashboard')}
+    />
   );
 }
 

@@ -449,3 +449,131 @@
     flex-direction: column;
   }
 }
+
+/* Estilos específicos para franquiciados */
+.producto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.stock-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.stock-badge.sin-stock {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.stock-badge.bajo-stock {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.producto-descripcion {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.producto-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.precio-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.precio {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+.peso {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.stock-info .stock {
+  font-weight: 600;
+  color: #374151;
+}
+
+.stock-info .stock.low {
+  color: #dc2626;
+}
+
+.categoria {
+  background: #e0e7ff;
+  color: #4338ca;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.info-section {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.info-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 1rem 0;
+}
+
+.info-card ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #64748b;
+}
+
+.info-card ol li {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.info-card p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .producto-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  
+  .precio-info {
+    justify-content: space-between;
+  }
+  
+  .info-section {
+    grid-template-columns: 1fr;
+  }
+}
