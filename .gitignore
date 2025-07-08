@@ -1,4 +1,49 @@
-node_modules
+# Dependencias
+node_modules/
+*/node_modules/
+
+# Archivos de producción
+build/
+dist/
+
+# Variables de entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de base de datos
+*.db
+*.sqlite
+
+# Archivos de cache
+.cache/
+.parcel-cache/
+
+# Archivos de cobertura
+coverage/
+
+# Archivos de Prisma
+prisma/migrations/
+!prisma/migrations/.keep
+
 # Keep environment variables out of version control
 
 

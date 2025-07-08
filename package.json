@@ -1,0 +1,19 @@
+{
+  "name": "saas-pedidos",
+  "version": "1.0.0",
+  "description": "Sistema SaaS de gestión de pedidos",
+  "scripts": {
+    "start": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "server": "cd backend && npm start",
+    "install-all": "cd frontend && npm install && cd ../backend && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usuario/saas-pedidos.git"
+  },
+  "keywords": ["saas", "pedidos", "react", "nodejs"],
+  "author": "",
+  "license": "ISC"
+} 
