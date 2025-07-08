@@ -389,7 +389,12 @@ app.post('/api/usuarios/franquiciados', authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'Negocio no encontrado' });
     }
 
-    const { nombre, email, telefono } = req.body;
+    const { nombre, email, telefono, password } = req.body;
+
+    // Validar que se proporcione la contraseña
+    if (!password || password.length < 6) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres' });
+    }
 
     // Verificar si el email ya existe
     const existingUser = await prisma.usuario.findUnique({
@@ -400,9 +405,8 @@ app.post('/api/usuarios/franquiciados', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'El email ya está registrado' });
     }
 
-    // Generar contraseña temporal
-    const tempPassword = Math.random().toString(36).slice(-8);
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    // Usar la contraseña proporcionada
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const franquiciado = await prisma.usuario.create({
       data: {
@@ -416,7 +420,7 @@ app.post('/api/usuarios/franquiciados', authenticateToken, async (req, res) => {
     });
 
     // TODO: Enviar email con credenciales
-    console.log(`Nuevo franquiciado creado: ${email} - Contraseña: ${tempPassword}`);
+    console.log(`Nuevo franquiciado creado: ${email}`);
 
     res.status(201).json({
       message: 'Franquiciado creado exitosamente',
@@ -449,6 +453,55 @@ app.put('/api/usuarios/:id/toggle-status', authenticateToken, async (req, res) =
     res.json(usuario);
   } catch (error) {
     res.status(500).json({ message: 'Error al cambiar estado' });
+  }
+});
+
+// Cambiar contraseña
+app.put('/api/usuarios/:id/change-password', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.tipo !== 'DUEÑO') {
+      return res.status(403).json({ message: 'Acceso denegado' });
+    }
+
+    const { id } = req.params;
+    const { newPassword } = req.body;
+
+    // Validar que se proporcione la contraseña
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+
+    // Verificar que el usuario existe y es del mismo negocio
+    const usuario = await prisma.usuario.findUnique({
+      where: { id },
+      include: { negocioFranquiciado: true }
+    });
+
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Verificar que el usuario pertenece al negocio del dueño
+    const negocio = await prisma.negocio.findUnique({
+      where: { dueñoId: req.user.id }
+    });
+
+    if (!negocio || usuario.negocioId !== negocio.id) {
+      return res.status(403).json({ message: 'No tienes permisos para cambiar la contraseña de este usuario' });
+    }
+
+    // Cambiar la contraseña
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.usuario.update({
+      where: { id },
+      data: { password: hashedPassword }
+    });
+
+    console.log(`Contraseña cambiada para usuario ${usuario.email}`);
+
+    res.json({ message: 'Contraseña cambiada exitosamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al cambiar contraseña' });
   }
 });
 

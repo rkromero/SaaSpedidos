@@ -6,10 +6,14 @@ function GestionFranquiciados() {
   const [franquiciados, setFranquiciados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [selectedFranquiciado, setSelectedFranquiciado] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
-    telefono: ''
+    telefono: '',
+    password: ''
   });
 
   useEffect(() => {
@@ -79,6 +83,36 @@ function GestionFranquiciados() {
     }
   };
 
+  const handleChangePassword = (franquiciado) => {
+    setSelectedFranquiciado(franquiciado);
+    setShowPasswordModal(true);
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newPassword || newPassword.length < 6) {
+      alert('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    
+    try {
+      const baseURL = process.env.REACT_APP_API_URL || '';
+      const token = localStorage.getItem('token');
+      await axios.put(`${baseURL}/api/usuarios/${selectedFranquiciado.id}/change-password`, {
+        newPassword
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Contraseña cambiada exitosamente');
+      setShowPasswordModal(false);
+      setNewPassword('');
+      setSelectedFranquiciado(null);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error al cambiar contraseña');
+    }
+  };
+
   const handleResetPassword = async (id) => {
     if (!window.confirm('¿Estás seguro de que quieres resetear la contraseña de este franquiciado?')) {
       return;
@@ -100,7 +134,8 @@ function GestionFranquiciados() {
     setFormData({
       nombre: '',
       email: '',
-      telefono: ''
+      telefono: '',
+      password: ''
     });
     setShowForm(false);
   };
@@ -163,9 +198,23 @@ function GestionFranquiciados() {
               />
             </div>
 
+            <div className="form-group">
+              <label htmlFor="password">Contraseña *</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Contraseña para el franquiciado"
+                minLength="6"
+              />
+            </div>
+
             <div className="form-info">
               <p>
-                <strong>Nota:</strong> Se generará automáticamente una contraseña y se enviará al email del franquiciado.
+                <strong>Nota:</strong> El franquiciado podrá cambiar su contraseña después de iniciar sesión.
               </p>
             </div>
 
@@ -178,6 +227,58 @@ function GestionFranquiciados() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {showPasswordModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h3>Cambiar Contraseña - {selectedFranquiciado?.nombre}</h3>
+              <button 
+                className="modal-close"
+                onClick={() => {
+                  setShowPasswordModal(false);
+                  setNewPassword('');
+                  setSelectedFranquiciado(null);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <form onSubmit={handlePasswordSubmit} className="modal-form">
+              <div className="form-group">
+                <label htmlFor="newPassword">Nueva Contraseña *</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  placeholder="Nueva contraseña (mínimo 6 caracteres)"
+                  minLength="6"
+                />
+              </div>
+              
+              <div className="modal-actions">
+                <button type="submit" className="btn btn-primary">
+                  Cambiar Contraseña
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    setNewPassword('');
+                    setSelectedFranquiciado(null);
+                  }}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
@@ -230,6 +331,13 @@ function GestionFranquiciados() {
                     onClick={() => handleToggleStatus(franquiciado.id, franquiciado.activo)}
                   >
                     {franquiciado.activo ? 'Desactivar' : 'Activar'}
+                  </button>
+                  
+                  <button 
+                    className="btn btn-small btn-secondary"
+                    onClick={() => handleChangePassword(franquiciado)}
+                  >
+                    Cambiar Contraseña
                   </button>
                   
                   <button 
