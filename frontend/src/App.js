@@ -49,7 +49,7 @@ function App() {
           <Routes>
             <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Landing />} />
             <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
-            <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
+            <Route path="/dashboard/*" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
             <Route path="/espacios" element={<EspaciosList />} />
             <Route path="/espacios/:espacioId/productos" element={<ProductosList />} />
             <Route path="/carrito" element={<Carrito />} />

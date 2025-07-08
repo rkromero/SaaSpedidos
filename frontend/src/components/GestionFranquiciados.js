@@ -14,6 +14,14 @@ function GestionFranquiciados() {
 
   useEffect(() => {
     fetchFranquiciados();
+    
+    // Verificar si se debe mostrar el formulario automáticamente
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'add') {
+      setShowForm(true);
+      // Limpiar el parámetro de la URL
+      window.history.replaceState({}, '', '/dashboard/franquiciados');
+    }
   }, []);
 
   const fetchFranquiciados = async () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ProductosList from './ProductosList';
 import Carrito from './Carrito';
@@ -216,6 +216,7 @@ function ProductosListDashboard() {
 
 // Componente de resumen para dueños
 function ResumenDueño({ user, negocio }) {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalProductos: 0,
     totalFranquiciados: 0,
@@ -242,7 +243,12 @@ function ResumenDueño({ user, negocio }) {
 
   const handleAgregarProducto = () => {
     // Navegar a productos y agregar parámetro para mostrar formulario
-    window.location.href = '/dashboard/productos?action=add';
+    navigate('/dashboard/productos?action=add');
+  };
+
+  const handleNuevoFranquiciado = () => {
+    // Navegar a franquiciados y agregar parámetro para mostrar formulario
+    navigate('/dashboard/franquiciados?action=add');
   };
 
   return (
@@ -292,11 +298,11 @@ function ResumenDueño({ user, negocio }) {
             <p>Carga un nuevo producto al catálogo</p>
           </div>
           
-          <Link to="/dashboard/franquiciados" className="action-card">
+          <div className="action-card" onClick={handleNuevoFranquiciado} style={{cursor: 'pointer'}}>
             <div className="action-icon">👤</div>
             <h4>Nuevo Franquiciado</h4>
             <p>Invita a un nuevo franquiciado</p>
-          </Link>
+          </div>
           
           <Link to="/dashboard/pedidos" className="action-card">
             <div className="action-icon">📋</div>
