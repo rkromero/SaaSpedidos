@@ -17,21 +17,21 @@ const EnhancedTabBar = ({ user }) => {
         label: 'Inicio', 
         path: '/dashboard',
         icon: 'home',
-        roles: ['DUEÑO_NEGOCIO', 'FRANQUICIADO', 'EMPLEADO']
+        roles: ['DUEÑO', 'FRANQUICIADO', 'EMPLEADO', 'DUEÑO_NEGOCIO']
       },
       {
         id: 'productos',
         label: 'Productos',
         path: '/dashboard/productos',
         icon: 'package',
-        roles: ['DUEÑO_NEGOCIO', 'FRANQUICIADO', 'EMPLEADO']
+        roles: ['DUEÑO', 'FRANQUICIADO', 'EMPLEADO', 'DUEÑO_NEGOCIO']
       },
       {
         id: 'pedidos',
         label: 'Pedidos',
         path: '/dashboard/pedidos',
         icon: 'clipboard',
-        roles: ['DUEÑO_NEGOCIO', 'FRANQUICIADO', 'EMPLEADO']
+        roles: ['DUEÑO', 'FRANQUICIADO', 'EMPLEADO', 'DUEÑO_NEGOCIO']
       },
       {
         id: 'carrito',
@@ -44,17 +44,19 @@ const EnhancedTabBar = ({ user }) => {
     ];
 
     // Agregar pestaña de admin para dueños de negocio
-    if (user?.rol === 'DUEÑO_NEGOCIO') {
+    if (user?.rol === 'DUEÑO' || user?.rol === 'DUEÑO_NEGOCIO' || user?.tipo === 'DUEÑO') {
       baseItems.push({
         id: 'admin',
         label: 'Admin',
         path: '/admin',
         icon: 'settings',
-        roles: ['DUEÑO_NEGOCIO']
+        roles: ['DUEÑO', 'DUEÑO_NEGOCIO']
       });
     }
 
-    return baseItems.filter(item => item.roles.includes(user?.rol));
+    return baseItems.filter(item => 
+      item.roles.includes(user?.rol) || item.roles.includes(user?.tipo)
+    );
   };
 
   const tabItems = getTabItems();

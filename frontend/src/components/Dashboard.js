@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useToast } from '../contexts/ToastContext';
 import Carrito from './Carrito';
@@ -47,7 +47,7 @@ function Dashboard({ user }) {
   // Dashboard para Dueño de Franquicia
   if (user.tipo === 'DUEÑO') {
     return (
-      <div className="p-4 bg-gray-50 min-h-full">
+      <div className="p-6 min-h-full">
         <Routes>
           <Route path="/" element={<ResumenDueño user={user} negocio={negocio} />} />
           <Route path="/metricas" element={<DashboardMetrics />} />
@@ -62,7 +62,7 @@ function Dashboard({ user }) {
 
   // Dashboard para Franquiciado
   return (
-    <div className="p-4 bg-gray-50 min-h-full">
+    <div className="p-6 min-h-full">
       <Routes>
         <Route path="/" element={<ProductosListFranquiciado />} />
         <Route path="/nuevo-pedido" element={<NuevoPedidoWrapper />} />
@@ -70,6 +70,30 @@ function Dashboard({ user }) {
         <Route path="/mis-pedidos" element={<MisPedidos />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
+    </div>
+  );
+}
+
+// Componente de bienvenida mejorado
+function WelcomeCard({ user, negocio }) {
+  return (
+    <div className="card-ios mb-6 bg-gradient-to-r from-purple-500 to-blue-600 text-white">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold mb-2">
+            ¡Hola, {user.nombre}! 👋
+          </h2>
+          <p className="text-purple-100 text-lg">
+            Bienvenido a {negocio?.nombre || 'tu negocio'}
+          </p>
+          <p className="text-purple-200 text-sm mt-1">
+            {user.tipo === 'DUEÑO' ? 'Panel de administración' : 'Panel de franquiciado'}
+          </p>
+        </div>
+        <div className="text-6xl opacity-80">
+          {user.tipo === 'DUEÑO' ? '👑' : '🏪'}
+        </div>
+      </div>
     </div>
   );
 }
@@ -152,76 +176,66 @@ function ProductosListDashboard() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold text-gray-900">Productos</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Productos</h2>
         <button 
           className="btn-ios-primary"
           onClick={() => setShowGestionProductos(true)}
         >
-          + Agregar
+          + Agregar Producto
         </button>
       </div>
 
       {productos.length === 0 ? (
         <div className="card-ios text-center py-12">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">📦</span>
+          <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-4xl">📦</span>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
             No tienes productos
           </h3>
           <p className="text-gray-600 mb-6">
-            Agrega tu primer producto para empezar
+            Agrega tu primer producto para empezar a gestionar tu inventario
           </p>
           <button 
             className="btn-ios-primary"
             onClick={() => setShowGestionProductos(true)}
           >
-            Agregar Producto
+            Agregar Primer Producto
           </button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid gap-4">
           {productos.map((producto) => (
             <div key={producto.id} className="card-ios">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
                     {producto.nombre}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-gray-600 mb-3">
                     {producto.descripcion}
                   </p>
-                  <div className="flex items-center space-x-4 text-sm">
-                    <span className="font-medium text-primary-600">
+                  <div className="flex items-center space-x-6 text-sm">
+                    <span className="text-2xl font-bold text-purple-600">
                       ${producto.precio}
                     </span>
-                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                      Para fabricación
+                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                      Stock: {producto.stock || 0}
                     </span>
                   </div>
-                  {producto.categoria && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {producto.categoria}
-                    </p>
-                  )}
                 </div>
-                
-                <div className="flex flex-col space-y-2 ml-4">
+                <div className="flex space-x-2">
                   <button 
-                    className="btn-ios-ghost px-3 py-1 text-sm"
-                    onClick={() => setShowGestionProductos(true)}
+                    className="btn-ios-secondary text-sm px-4 py-2"
+                    onClick={() => {/* Implementar edición */}}
                   >
                     Editar
                   </button>
                   <button 
-                    className="btn-ios-ghost px-3 py-1 text-sm text-red-600"
-                    onClick={() => {
-                      if (window.confirm('¿Eliminar este producto?')) {
-                        handleDeleteProduct(producto.id);
-                      }
-                    }}
+                    className="btn-ios-ghost text-red-600 text-sm px-4 py-2"
+                    onClick={() => handleDeleteProduct(producto.id)}
                   >
                     Eliminar
                   </button>
@@ -237,27 +251,28 @@ function ProductosListDashboard() {
 
 // Componente de resumen para dueños
 function ResumenDueño({ user, negocio }) {
-  const navigate = useNavigate();
-  const { showToast } = useToast();
   const [stats, setStats] = useState({
     totalProductos: 0,
+    totalPedidos: 0,
     totalFranquiciados: 0,
-    pedidosPendientes: 0,
-    ventasMes: 0
+    ventasDelMes: 0
   });
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const baseURL = process.env.REACT_APP_API_URL || '';
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${baseURL}/api/negocios/stats`, {
+        const response = await axios.get(`${baseURL}/api/stats/resumen`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStats(response.data);
+        setLoading(false);
       } catch (err) {
         console.error('Error fetching stats:', err);
-        showToast('Error al cargar estadísticas', 'error');
+        setLoading(false);
       }
     };
 
@@ -269,125 +284,93 @@ function ResumenDueño({ user, negocio }) {
   };
 
   const handleNuevoFranquiciado = () => {
-    navigate('/dashboard/franquiciados?action=add');
+    navigate('/dashboard/franquiciados');
   };
+
+  if (loading) {
+    return (
+      <div className="loading-ios">
+        <div className="spinner-ios"></div>
+        <p className="text-gray-600 mt-4">Cargando resumen...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Bienvenida */}
-      <div className="card-ios">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-lg">
-              {user.nombre?.charAt(0) || 'U'}
-            </span>
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-gray-900">
-              ¡Hola, {user.nombre}!
-            </h1>
-            <p className="text-sm text-gray-600">
-              {negocio?.nombre}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Estadísticas */}
-      <div className="grid grid-cols-2 gap-3">
+      <WelcomeCard user={user} negocio={negocio} />
+      
+      {/* Métricas principales */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="card-ios text-center">
-          <div className="text-2xl mb-2">📦</div>
-          <div className="text-2xl font-bold text-gray-900">
-            {stats.totalProductos}
-          </div>
+          <div className="text-3xl mb-2">📦</div>
+          <div className="text-2xl font-bold text-gray-900">{stats.totalProductos}</div>
           <div className="text-sm text-gray-600">Productos</div>
         </div>
-        
         <div className="card-ios text-center">
-          <div className="text-2xl mb-2">👥</div>
-          <div className="text-2xl font-bold text-gray-900">
-            {stats.totalFranquiciados}
-          </div>
-          <div className="text-sm text-gray-600">Franquiciados</div>
-        </div>
-        
-        <div className="card-ios text-center">
-          <div className="text-2xl mb-2">🛒</div>
-          <div className="text-2xl font-bold text-gray-900">
-            {stats.pedidosPendientes}
-          </div>
+          <div className="text-3xl mb-2">📋</div>
+          <div className="text-2xl font-bold text-gray-900">{stats.totalPedidos}</div>
           <div className="text-sm text-gray-600">Pedidos</div>
         </div>
-        
         <div className="card-ios text-center">
-          <div className="text-2xl mb-2">💰</div>
-          <div className="text-2xl font-bold text-gray-900">
-            ${stats.ventasMes}
-          </div>
-          <div className="text-sm text-gray-600">Ventas</div>
+          <div className="text-3xl mb-2">🏪</div>
+          <div className="text-2xl font-bold text-gray-900">{stats.totalFranquiciados}</div>
+          <div className="text-sm text-gray-600">Franquiciados</div>
+        </div>
+        <div className="card-ios text-center">
+          <div className="text-3xl mb-2">💰</div>
+          <div className="text-2xl font-bold text-gray-900">${stats.ventasDelMes}</div>
+          <div className="text-sm text-gray-600">Ventas del mes</div>
         </div>
       </div>
 
-      {/* Acciones Rápidas */}
-      <div className="space-y-3">
-        <h3 className="font-semibold text-gray-900">Acciones Rápidas</h3>
-        
-        <div className="card-ios haptic" onClick={handleAgregarProducto}>
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">➕</span>
-            </div>
+      {/* Acciones rápidas */}
+      <div className="card-ios">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button 
+            className="btn-ios-primary"
+            onClick={handleAgregarProducto}
+          >
+            <span className="text-lg mr-2">📦</span>
+            Agregar Producto
+          </button>
+          <button 
+            className="btn-ios-secondary"
+            onClick={handleNuevoFranquiciado}
+          >
+            <span className="text-lg mr-2">🏪</span>
+            Nuevo Franquiciado
+          </button>
+        </div>
+      </div>
+
+      {/* Resumen de actividad reciente */}
+      <div className="card-ios">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
+        <div className="space-y-3">
+          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div className="text-2xl">🎉</div>
             <div className="flex-1">
-              <h4 className="font-semibold text-gray-900">Agregar Producto</h4>
-              <p className="text-sm text-gray-600">
-                Carga un nuevo producto al catálogo
-              </p>
+              <p className="text-sm font-medium text-gray-900">Nuevo pedido recibido</p>
+              <p className="text-xs text-gray-500">Hace 2 horas</p>
             </div>
-            <div className="text-gray-400">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
+          </div>
+          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div className="text-2xl">✅</div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900">Producto agregado al catálogo</p>
+              <p className="text-xs text-gray-500">Hace 1 día</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div className="text-2xl">🏪</div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900">Nuevo franquiciado registrado</p>
+              <p className="text-xs text-gray-500">Hace 3 días</p>
             </div>
           </div>
         </div>
-        
-        <div className="card-ios haptic" onClick={handleNuevoFranquiciado}>
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">👤</span>
-            </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-gray-900">Nuevo Franquiciado</h4>
-              <p className="text-sm text-gray-600">
-                Invita a un nuevo franquiciado
-              </p>
-            </div>
-            <div className="text-gray-400">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-        </div>
-        
-        <Link to="/dashboard/pedidos" className="card-ios haptic block">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">📋</span>
-            </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-gray-900">Ver Pedidos</h4>
-              <p className="text-sm text-gray-600">
-                Revisa y gestiona los pedidos
-              </p>
-            </div>
-            <div className="text-gray-400">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-        </Link>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import EnhancedTabBar from './EnhancedTabBar';
 const EnhancedLayout = ({ children, user, onLogout }) => {
   return (
     <NavigationProvider>
-      <div className="h-screen-ios bg-gray-50 dark:bg-gray-900">
+      <div className="h-screen-ios bg-gray-50 dark:bg-gray-900 relative">
         {/* Header mejorado */}
         <EnhancedHeader user={user} onLogout={onLogout} />
         
