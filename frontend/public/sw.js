@@ -13,7 +13,9 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        return cache.addAll(urlsToCache);
+        return cache.addAll(urlsToCache.filter(url => {
+          return !url.includes('chrome-extension') && !url.includes('moz-extension');
+        }));
       })
   );
 });
@@ -33,32 +35,50 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Función para verificar si la request es cacheable
+function isRequestCacheable(request) {
+  const url = new URL(request.url);
+  
+  // Solo cachear HTTP y HTTPS
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return false;
+  }
+  
+  // Ignorar extensiones del navegador
+  if (url.protocol.includes('extension')) {
+    return false;
+  }
+  
+  // Ignorar requests del mismo origen si contienen chrome-extension
+  if (request.url.includes('chrome-extension') || request.url.includes('moz-extension')) {
+    return false;
+  }
+  
+  return true;
+}
+
 // Estrategia de cache: Network First para API calls, Cache First para assets
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  
+  // Verificar si la request es cacheable antes de procesarla
+  if (!isRequestCacheable(request)) {
+    return;
+  }
+
   const url = new URL(request.url);
-
-  // Ignorar requests de extensiones de Chrome y esquemas no soportados
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    return;
-  }
-
-  // Ignorar requests de extensiones de Chrome específicamente
-  if (url.protocol === 'chrome-extension:' || url.protocol === 'moz-extension:') {
-    return;
-  }
 
   // API calls - Network First
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          // Solo cachear respuestas GET exitosas
-          if (request.method === 'GET' && response.status === 200) {
+          // Solo cachear respuestas GET exitosas y cacheables
+          if (request.method === 'GET' && response.status === 200 && isRequestCacheable(request)) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseClone).catch(() => {
-                // Silenciar errores de cache
+              cache.put(request, responseClone).catch((err) => {
+                console.warn('Failed to cache request:', request.url, err);
               });
             });
           }
@@ -79,15 +99,15 @@ self.addEventListener('fetch', (event) => {
           if (response) {
             return response;
           }
-          // Si no está en cache, hacer fetch y cachear
+          // Si no está en cache, hacer fetch y cachear solo si es cacheable
           return fetch(request).then((response) => {
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            if (!response || response.status !== 200 || response.type !== 'basic' || !isRequestCacheable(request)) {
               return response;
             }
             const responseToCache = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache).catch(() => {
-                // Silenciar errores de cache
+              cache.put(request, responseToCache).catch((err) => {
+                console.warn('Failed to cache request:', request.url, err);
               });
             });
             return response;
