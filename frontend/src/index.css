@@ -220,7 +220,7 @@
   }
 
   .spinner-ios {
-    @apply animate-spin rounded-full h-10 w-10 border-3;
+    @apply animate-spin rounded-full h-10 w-10 border-2;
     border-color: #e5e7eb;
     border-top-color: #667eea;
     box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
