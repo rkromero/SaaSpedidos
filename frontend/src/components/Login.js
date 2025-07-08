@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './Login.css';
+import { useToast } from '../contexts/ToastContext';
 
 function Login({ onLogin }) {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ function Login({ onLogin }) {
     password: ''
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const handleChange = (e) => {
     setFormData({
@@ -21,74 +21,109 @@ function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       const baseURL = process.env.REACT_APP_API_URL || '';
       const response = await axios.post(`${baseURL}/api/auth/login`, formData);
       
       const { user, token } = response.data;
+      showToast('¡Bienvenido! Sesión iniciada correctamente', 'success');
       onLogin(user, token);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      showToast(err.response?.data?.message || 'Error al iniciar sesión', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <h1>Iniciar Sesión</h1>
-          <p>Accede a tu cuenta de SaaS Pedidos</p>
+    <div className="h-screen-ios bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        {/* Logo/Header */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-ios-lg">
+            <span className="text-3xl">📱</span>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">SaaS Pedidos</h1>
+          <p className="text-primary-100 text-lg">Accede a tu cuenta</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="tu@email.com"
-            />
-          </div>
+        {/* Login Form */}
+        <div className="card-ios bg-white/95 backdrop-blur-sm">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="tu@email.com"
+                  className="input-ios"
+                  disabled={loading}
+                />
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Contraseña</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Tu contraseña"
-            />
-          </div>
-
-          {error && (
-            <div className="error-message">
-              {error}
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Contraseña
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Tu contraseña"
+                  className="input-ios"
+                  disabled={loading}
+                />
+              </div>
             </div>
-          )}
 
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-          </button>
-        </form>
+            <button 
+              type="submit" 
+              className="btn-ios-primary w-full"
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="spinner-ios mr-2"></div>
+                  Iniciando sesión...
+                </div>
+              ) : (
+                'Iniciar Sesión'
+              )}
+            </button>
+          </form>
 
-        <div className="login-footer">
-          <p>
-            ¿No tienes cuenta?{' '}
-            <Link to="/" className="link">
-              Registra tu negocio
-            </Link>
-          </p>
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <p className="text-center text-sm text-gray-600">
+              ¿No tienes cuenta?{' '}
+              <Link 
+                to="/" 
+                className="text-primary-600 font-medium hover:text-primary-700 transition-colors"
+              >
+                Registra tu negocio
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Demo credentials */}
+        <div className="mt-6 p-4 bg-white/20 rounded-ios backdrop-blur-sm">
+          <p className="text-white text-sm font-medium mb-2">Credenciales de prueba:</p>
+          <div className="space-y-1 text-primary-100 text-xs">
+            <p>• admin@test.com / admin123 (Dueño)</p>
+            <p>• franquicia@test.com / franquicia123 (Franquiciado)</p>
+            <p>• empleado@test.com / empleado123 (Empleado)</p>
+          </div>
         </div>
       </div>
     </div>
