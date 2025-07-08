@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { useHaptics } from '../../hooks/useHaptics';
@@ -60,12 +60,12 @@ const EnhancedTabBar = ({ user }) => {
   const tabItems = getTabItems();
 
   // Verificar si una pestaña está activa
-  const isActive = (path) => {
+  const isActive = useCallback((path) => {
     if (path === '/dashboard') {
       return location.pathname === '/dashboard' || location.pathname === '/dashboard/';
     }
     return location.pathname.startsWith(path);
-  };
+  }, [location.pathname]);
 
   // Manejar click en pestaña
   const handleTabClick = (item) => {
