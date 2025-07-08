@@ -6,7 +6,7 @@ import { useHaptics } from '../../hooks/useHaptics';
 const EnhancedTabBar = ({ user }) => {
   const location = useLocation();
   const { navigateTo } = useNavigation();
-  const { playHapticFeedback } = useHaptics();
+  const { light: playHapticFeedback } = useHaptics();
   const [activeTabIndicator, setActiveTabIndicator] = useState({ width: 0, left: 0 });
 
   // Configuración de pestañas basada en el rol del usuario
@@ -70,7 +70,7 @@ const EnhancedTabBar = ({ user }) => {
   // Manejar click en pestaña
   const handleTabClick = (item) => {
     if (!isActive(item.path)) {
-      playHapticFeedback('light');
+      playHapticFeedback();
       navigateTo(item.path);
     }
   };

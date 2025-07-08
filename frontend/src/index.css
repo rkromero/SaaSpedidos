@@ -170,9 +170,9 @@
 
   /* Content area principal */
   .main-content {
-    @apply flex-1 overflow-hidden;
+    @apply flex-1 overflow-y-auto;
     height: calc(100vh - auto - 70px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    padding-top: 0;
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
   }
 
   /* Loading spinner iOS */
@@ -409,10 +409,11 @@
 
   /* Enhanced Tab Bar Styles */
   .enhanced-tab-bar {
-    @apply relative bg-white border-t border-gray-200;
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50;
     height: calc(70px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     backdrop-filter: blur(20px);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   }
 
   .tab-indicator {
@@ -567,6 +568,7 @@
 
   .enhanced-tab-bar {
     @apply bg-gray-900 border-gray-700;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
   }
 
   .tab-item:not(.active) {
