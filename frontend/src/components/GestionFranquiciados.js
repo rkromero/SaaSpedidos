@@ -32,7 +32,7 @@ function GestionFranquiciados() {
 
   const fetchFranquiciados = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       const response = await axios.get(`${baseURL}/api/usuarios/franquiciados`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -56,7 +56,7 @@ function GestionFranquiciados() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       
       await axios.post(`${baseURL}/api/usuarios/franquiciados`, formData, {
@@ -73,7 +73,7 @@ function GestionFranquiciados() {
 
   const handleToggleStatus = async (id, currentStatus) => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       await axios.put(`${baseURL}/api/usuarios/${id}/toggle-status`, {
         activo: !currentStatus
@@ -101,7 +101,7 @@ function GestionFranquiciados() {
     }
     
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       await axios.put(`${baseURL}/api/usuarios/${selectedFranquiciado.id}/change-password`, {
         newPassword
@@ -123,7 +123,7 @@ function GestionFranquiciados() {
     }
     
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       await axios.post(`${baseURL}/api/usuarios/${id}/reset-password`, {}, {
         headers: { Authorization: `Bearer ${token}` }

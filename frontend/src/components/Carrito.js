@@ -15,7 +15,7 @@ function Carrito() {
 
   const fetchCarrito = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const response = await axios.get(`${baseURL}/api/carrito`);
       setCarrito(response.data.items || []);
       setLoading(false);
@@ -29,7 +29,7 @@ function Carrito() {
     if (nuevaCantidad < 1) return;
     
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       await axios.put(`${baseURL}/api/carrito/actualizar`, {
         productoId,
         cantidad: nuevaCantidad
@@ -43,7 +43,7 @@ function Carrito() {
 
   const eliminarProducto = async (productoId) => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       await axios.delete(`${baseURL}/api/carrito/eliminar/${productoId}`);
       fetchCarrito();
       showToast('Producto eliminado del carrito', 'success');
@@ -55,7 +55,7 @@ function Carrito() {
   const realizarPedido = async () => {
     setProcesando(true);
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       await axios.post(`${baseURL}/api/pedidos`);
       showToast('¡Pedido realizado con éxito!', 'success');
       setCarrito([]);

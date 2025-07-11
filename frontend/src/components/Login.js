@@ -23,7 +23,7 @@ function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const response = await axios.post(`${baseURL}/api/auth/login`, formData);
       
       const { user, token } = response.data;

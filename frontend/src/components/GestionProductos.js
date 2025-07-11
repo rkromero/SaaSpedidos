@@ -23,7 +23,7 @@ function GestionProductos({ onProductoCreated }) {
 
   const fetchProductos = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       const response = await axios.get(`${baseURL}/api/productos/mi-negocio`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -49,7 +49,7 @@ function GestionProductos({ onProductoCreated }) {
     setSubmitting(true);
     
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       
       const isCreating = !editingId;
@@ -97,7 +97,7 @@ function GestionProductos({ onProductoCreated }) {
 
   const handleDelete = async (id) => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       await axios.delete(`${baseURL}/api/productos/${id}`, {
         headers: { Authorization: `Bearer ${token}` }

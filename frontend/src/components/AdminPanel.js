@@ -17,7 +17,7 @@ function AdminPanel() {
 
   const fetchData = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       
       const [pedidosRes, productosRes] = await Promise.all([
@@ -41,7 +41,7 @@ function AdminPanel() {
 
   const cambiarEstadoPedido = async (pedidoId, nuevoEstado) => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       await axios.put(`${baseURL}/api/pedidos/${pedidoId}/estado`, 
         { estado: nuevoEstado },

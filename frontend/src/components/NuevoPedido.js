@@ -17,7 +17,7 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
 
   const fetchProductos = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       const response = await axios.get(`${baseURL}/api/productos/mi-negocio`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -84,7 +84,7 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
     setSubmitting(true);
     
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       
       const pedidoData = {

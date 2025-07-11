@@ -21,7 +21,7 @@ function DashboardMetrics() {
 
   const fetchStats = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       
       const [statsResponse, pedidosResponse] = await Promise.all([

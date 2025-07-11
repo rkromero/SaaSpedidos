@@ -18,7 +18,7 @@ function Dashboard({ user }) {
   useEffect(() => {
     const fetchNegocio = async () => {
       try {
-        const baseURL = process.env.REACT_APP_API_URL || '';
+        const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
         const token = localStorage.getItem('token');
         const response = await axios.get(`${baseURL}/api/negocios/mi-negocio`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -119,7 +119,7 @@ function ProductosListDashboard() {
 
   const fetchProductos = async () => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       const response = await axios.get(`${baseURL}/api/productos/mi-negocio`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -135,7 +135,7 @@ function ProductosListDashboard() {
 
   const handleDeleteProduct = async (id) => {
     try {
-      const baseURL = process.env.REACT_APP_API_URL || '';
+      const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
       await axios.delete(`${baseURL}/api/productos/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -263,9 +263,9 @@ function ResumenDueño({ user, negocio }) {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const baseURL = process.env.REACT_APP_API_URL || '';
+        const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${baseURL}/api/stats/resumen`, {
+        const response = await axios.get(`${baseURL}/api/negocios/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStats(response.data);
@@ -385,7 +385,7 @@ function MisPedidos() {
   useEffect(() => {
     const fetchPedidos = async () => {
       try {
-        const baseURL = process.env.REACT_APP_API_URL || '';
+        const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
         const token = localStorage.getItem('token');
         const response = await axios.get(`${baseURL}/api/pedidos/mis-pedidos`, {
           headers: { Authorization: `Bearer ${token}` }
