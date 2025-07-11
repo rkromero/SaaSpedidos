@@ -1,11 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useToast } from '../contexts/ToastContext';
-import { useHaptics } from '../hooks/useHaptics';
 import './Toast.css';
 
 const Toast = ({ toast }) => {
   const { removeToast } = useToast();
-  const haptics = useHaptics();
 
   const getIcon = (type) => {
     switch (type) {
@@ -15,33 +13,12 @@ const Toast = ({ toast }) => {
         return '✗';
       case 'warning':
         return '⚠';
-      case 'info':
-        return 'ℹ';
       default:
         return 'ℹ';
     }
   };
 
-  useEffect(() => {
-    // Haptic feedback basado en el tipo
-    switch (toast.type) {
-      case 'success':
-        haptics.success();
-        break;
-      case 'error':
-        haptics.error();
-        break;
-      case 'warning':
-        haptics.medium();
-        break;
-      default:
-        haptics.light();
-        break;
-    }
-  }, [toast.type, haptics]);
-
   const handleClose = () => {
-    haptics.light();
     removeToast(toast.id);
   };
 
@@ -57,18 +34,10 @@ const Toast = ({ toast }) => {
         <button 
           className="toast-close"
           onClick={handleClose}
-          aria-label="Cerrar notificación"
+          aria-label="Cerrar"
         >
           ×
         </button>
-      </div>
-      <div className="toast-progress">
-        <div 
-          className="toast-progress-bar"
-          style={{ 
-            animationDuration: `${toast.duration}ms`
-          }}
-        />
       </div>
     </div>
   );
