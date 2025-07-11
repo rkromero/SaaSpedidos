@@ -1,17 +1,16 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "deploy": {
-    "restartPolicyType": "ON_FAILURE",
-    "startCommand": "cd frontend && node server.js",
-    "buildCommand": "cd frontend && npm install && CI=false npm run build"
+    "restartPolicyType": "ON_FAILURE", 
+    "startCommand": "cd frontend && node server-nuclear.js",
+    "buildCommand": "cd frontend && rm -rf build && npm install && CI=false GENERATE_SOURCEMAP=false npm run build"
   },
   "environments": {
     "production": {
       "variables": {
         "NODE_ENV": "production",
-        "GENERATE_SOURCEMAP": "false",
         "CI": "false",
-        "PORT": "3000"
+        "GENERATE_SOURCEMAP": "false"
       }
     }
   }

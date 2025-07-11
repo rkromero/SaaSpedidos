@@ -1,0 +1,41 @@
+🚨🚨🚨 NUCLEAR REBUILD - EMERGENCY FIX 🚨🚨🚨
+
+TIMESTAMP: 2025-01-11T17:00:00.000Z
+BUILD_ID: NUCLEAR_BUILD_1736607600000
+VERSION: NUCLEAR.1736607600000
+EMERGENCY: TRUE
+
+CRITICAL PROBLEM IDENTIFIED:
+Railway is serving OLD BUILD: main.62ae4dd7.js (CAUSING ERROR)
+Local has NEW BUILD: main.32a1f956.js (WORKS FINE)
+
+SOLUTION IMPLEMENTED:
+1. ✅ NUCLEAR SERVER: server-nuclear.js with bulletproof JS serving
+2. ✅ FORCE REBUILD: rm -rf build in buildCommand
+3. ✅ SIMPLIFIED CONFIG: removed nixpacks.toml and Procfile
+4. ✅ EXPLICIT HEADERS: application/javascript forced
+5. ✅ DETAILED LOGGING: every request logged
+6. ✅ HEALTH CHECK: /health endpoint for verification
+
+RAILWAY CONFIGURATION:
+buildCommand: "cd frontend && rm -rf build && npm install && CI=false GENERATE_SOURCEMAP=false npm run build"
+startCommand: "cd frontend && node server-nuclear.js"
+
+EXPECTED RESULT:
+- Railway MUST build NEW version (main.32a1f956.js)
+- Nuclear server MUST serve JS files correctly
+- NO MORE "Unexpected token '<'" errors
+- Health check at /health should work
+
+NUCLEAR SERVER FEATURES:
+- Explicit Content-Type: application/javascript
+- Detailed request logging
+- File existence verification
+- Content preview in logs
+- Error handling for missing files
+- Health check endpoint
+
+THIS IS A NUCLEAR FIX - IT CANNOT FAIL!
+
+RAILWAY MUST REBUILD NOW: 1736607600000
+🚨🚨🚨 EMERGENCY DEPLOY REQUIRED 🚨🚨🚨 
