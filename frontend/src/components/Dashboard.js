@@ -68,15 +68,15 @@ function ResumenDueño({ user }) {
         <div className="grid grid-cols-2 gap-3">
           <button 
             className="btn-ios-primary"
-            onClick={() => navigate('productos')}
+            onClick={() => navigate('/dashboard/productos')}
           >
             📦 Productos
           </button>
           <button 
             className="btn-ios-secondary"
-            onClick={() => navigate('franquiciados')}
+            onClick={() => navigate('/dashboard/pedidos')}
           >
-            👥 Franquiciados
+            📋 Pedidos
           </button>
         </div>
       </div>
