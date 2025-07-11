@@ -1,8 +1,8 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "deploy": {
-    "restartPolicyType": "ON_FAILURE", 
-    "startCommand": "cd frontend && node server-nuclear.js",
+    "restartPolicyType": "ON_FAILURE",
+    "startCommand": "node server.js",
     "buildCommand": "cd frontend && rm -rf build && npm install && CI=false GENERATE_SOURCEMAP=false npm run build"
   },
   "environments": {

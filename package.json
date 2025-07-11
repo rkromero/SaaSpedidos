@@ -1,13 +1,20 @@
 {
   "name": "saas-pedidos",
-  "version": "1.0.0",
+  "version": "ULTIMATE.1736608000000",
   "description": "Sistema SaaS de gestión de pedidos",
+  "main": "server.js",
   "scripts": {
-    "start": "cd frontend && npm start",
+    "start": "node server.js",
     "build": "cd frontend && npm run build",
     "server": "cd backend && npm start",
     "install-all": "cd frontend && npm install && cd ../backend && npm install",
     "dev": "concurrently \"npm run server\" \"npm run start\""
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
   },
   "repository": {
     "type": "git",
@@ -15,5 +22,9 @@
   },
   "keywords": ["saas", "pedidos", "react", "nodejs"],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
 } 
