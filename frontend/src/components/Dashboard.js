@@ -27,10 +27,10 @@ function Dashboard({ user, negocio }) {
       <div className="p-6 min-h-full">
         <Routes>
           <Route path="/" element={<ResumenDueño user={user} negocio={negocio} />} />
-          <Route path="/metricas" element={<DashboardMetrics />} />
-          <Route path="/productos" element={<ProductosListDashboard />} />
-          <Route path="/franquiciados" element={<GestionFranquiciados />} />
-          <Route path="/pedidos" element={<AdminPanel />} />
+          <Route path="metricas" element={<DashboardMetrics />} />
+          <Route path="productos" element={<ProductosListDashboard />} />
+          <Route path="franquiciados" element={<GestionFranquiciados />} />
+          <Route path="pedidos" element={<AdminPanel />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </div>
@@ -42,9 +42,9 @@ function Dashboard({ user, negocio }) {
     <div className="p-6 min-h-full">
       <Routes>
         <Route path="/" element={<ProductosListFranquiciado />} />
-        <Route path="/nuevo-pedido" element={<NuevoPedidoWrapper />} />
-        <Route path="/carrito" element={<Carrito />} />
-        <Route path="/mis-pedidos" element={<MisPedidos />} />
+        <Route path="nuevo-pedido" element={<NuevoPedidoWrapper />} />
+        <Route path="carrito" element={<Carrito />} />
+        <Route path="mis-pedidos" element={<MisPedidos />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </div>
@@ -79,13 +79,13 @@ function ResumenDueño({ user, negocio }) {
         <div className="grid grid-cols-2 gap-3">
           <button 
             className="btn-ios-primary"
-            onClick={() => navigate('/dashboard/productos')}
+            onClick={() => navigate('productos')}
           >
             📦 Productos
           </button>
           <button 
             className="btn-ios-secondary"
-            onClick={() => navigate('/dashboard/franquiciados')}
+            onClick={() => navigate('franquiciados')}
           >
             👥 Franquiciados
           </button>
