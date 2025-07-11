@@ -1,7 +1,0 @@
-// NUCLEAR BUILD INFO - 2025-01-11T15:40:00.000Z
-export const NUCLEAR_VERSION = '3.0.1752248000000';
-export const NUCLEAR_BUILD_TIME = 1752248000000;
-
-console.log('💥 NUCLEAR VERSION:', NUCLEAR_VERSION);
-console.log('💥 NUCLEAR BUILD TIME:', new Date(NUCLEAR_BUILD_TIME).toLocaleString());
-console.log('💥 NO MORE LOOPS!'); 
