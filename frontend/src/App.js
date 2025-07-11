@@ -15,6 +15,7 @@ import EnhancedLayout from './components/navigation/EnhancedLayout';
 import './App.css';
 import './buildInfo.js';
 import './nuclearBuildInfo.js';
+import './ultraBuildInfo.js';
 // EMERGENCY FIX: Configure axios globally
 import axios from 'axios';
 
