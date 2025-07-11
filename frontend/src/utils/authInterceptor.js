@@ -1,68 +1,43 @@
 import axios from 'axios';
 
-// Configurar interceptor para manejar errores de autenticación
-export const setupAuthInterceptor = (onLogout) => {
-  // Interceptor para requests
-  axios.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-
-  // Interceptor para responses
-  axios.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        // Token inválido o expirado
-        console.log('Token inválido, redirigiendo al login...');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        if (onLogout) {
-          onLogout();
-        } else {
-          window.location.href = '/login';
-        }
-      }
-      return Promise.reject(error);
-    }
-  );
-};
-
-// Función para verificar si el token es válido
-
-
-// Función para obtener headers de autenticación
-export const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
-
-// Función para hacer requests autenticados
+// Función simple para hacer requests autenticados
 export const authenticatedRequest = async (url, options = {}) => {
   const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
   const token = localStorage.getItem('token');
-  
-  if (!token) {
-    throw new Error('No valid token available');
-  }
   
   const config = {
     ...options,
     headers: {
       ...options.headers,
-      Authorization: `Bearer ${token}`,
+      Authorization: token ? `Bearer ${token}` : undefined,
     },
   };
   
   return axios(`${baseURL}${url}`, config);
+};
+
+// Función simple para verificar token
+export const isAuthenticated = () => {
+  return !!localStorage.getItem('token');
+};
+
+// Función simple para logout
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/login';
+};
+
+// Setup básico sin interceptors complejos
+export const setupAuthInterceptor = () => {
+  // Interceptor simple solo para logout en 401
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        logout();
+      }
+      return Promise.reject(error);
+    }
+  );
 }; 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import Carrito from './Carrito';
 import AdminPanel from './AdminPanel';
@@ -9,24 +9,13 @@ import ProductosListFranquiciado from './ProductosListFranquiciado';
 import NuevoPedido from './NuevoPedido';
 import DashboardMetrics from './DashboardMetrics';
 
-function Dashboard({ user, negocio }) {
-  // NO MORE USEEFFECT! NO MORE FETCH! NEGOCIO COMES FROM PROPS!
-
-  if (!negocio) {
-    return (
-      <div className="loading-ios">
-        <div className="spinner-ios"></div>
-        <p className="text-gray-600 mt-4">Cargando dashboard...</p>
-      </div>
-    );
-  }
-
+function Dashboard({ user }) {
   // Dashboard para Dueño de Franquicia
   if (user.tipo === 'DUEÑO') {
     return (
       <div className="p-6 min-h-full">
         <Routes>
-          <Route path="/" element={<ResumenDueño user={user} negocio={negocio} />} />
+          <Route path="/" element={<ResumenDueño user={user} />} />
           <Route path="metricas" element={<DashboardMetrics />} />
           <Route path="productos" element={<ProductosListDashboard />} />
           <Route path="franquiciados" element={<GestionFranquiciados />} />
@@ -52,13 +41,13 @@ function Dashboard({ user, negocio }) {
 }
 
 // Simple welcome component
-function WelcomeCard({ user, negocio }) {
+function WelcomeCard({ user }) {
   return (
     <div className="card-ios mb-6 bg-gradient-to-r from-purple-500 to-blue-600 text-white">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold mb-2">¡Hola, {user.nombre}! 👋</h2>
-          <p className="text-purple-100 text-lg">Bienvenido a {negocio?.nombre || 'tu negocio'}</p>
+          <p className="text-purple-100 text-lg">Bienvenido a tu dashboard</p>
         </div>
         <div className="text-6xl opacity-80">{user.tipo === 'DUEÑO' ? '👑' : '🏪'}</div>
       </div>
@@ -66,13 +55,13 @@ function WelcomeCard({ user, negocio }) {
   );
 }
 
-// Simple resumen - NO FETCH
-function ResumenDueño({ user, negocio }) {
+// Simple resumen sin fetch
+function ResumenDueño({ user }) {
   const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
-      <WelcomeCard user={user} negocio={negocio} />
+      <WelcomeCard user={user} />
       
       <div className="card-ios">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
@@ -95,7 +84,7 @@ function ResumenDueño({ user, negocio }) {
   );
 }
 
-// Simple productos list - NO INITIAL FETCH
+// Simple productos list
 function ProductosListDashboard() {
   const [showGestionProductos, setShowGestionProductos] = useState(false);
 
@@ -133,7 +122,7 @@ function ProductosListDashboard() {
   );
 }
 
-// Simple pedidos - NO FETCH
+// Simple pedidos
 function MisPedidos() {
   return (
     <div className="space-y-6">
