@@ -39,20 +39,7 @@ export const setupAuthInterceptor = (onLogout) => {
 };
 
 // Función para verificar si el token es válido
-export const isTokenValid = () => {
-  const token = localStorage.getItem('token');
-  if (!token) return false;
-  
-  try {
-    // Decodificar el JWT para verificar expiración
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Date.now() / 1000;
-    return payload.exp > currentTime;
-  } catch (error) {
-    console.error('Error validating token:', error);
-    return false;
-  }
-};
+
 
 // Función para obtener headers de autenticación
 export const getAuthHeaders = () => {

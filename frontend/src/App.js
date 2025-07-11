@@ -67,14 +67,9 @@ function App() {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
-    if (token && userData && isTokenValid()) {
+    if (token && userData) {
       setUser(JSON.parse(userData));
-    } else if (token || userData) {
-      // Limpiar datos inválidos
-      console.log('Token inválido o expirado, limpiando datos...');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-    }
+    
     setLoading(false);
   }, []);
 

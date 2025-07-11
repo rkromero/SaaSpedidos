@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useToast } from '../contexts/ToastContext';
-import { useApi } from '../hooks/useAuthenticatedRequest';
-import { isTokenValid } from '../utils/authInterceptor';
-import AuthError from './AuthError';
 import Carrito from './Carrito';
 import AdminPanel from './AdminPanel';
 import GestionProductos from './GestionProductos';
@@ -16,42 +13,56 @@ import DashboardMetrics from './DashboardMetrics';
 function Dashboard({ user }) {
   const [negocio, setNegocio] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [authError, setAuthError] = useState(false);
   const { showToast } = useToast();
-  const api = useApi();
 
   useEffect(() => {
+    let mounted = true;
+    
     const fetchNegocio = async () => {
-      // Verificar token antes de hacer la petición
-      if (!isTokenValid()) {
-        console.error('Token no válido en Dashboard');
-        setAuthError(true);
-        setLoading(false);
-        return;
-      }
-
+      if (!mounted) return;
+      
       try {
-        console.log('Fetching negocio data...');
-        const data = await api.get('/api/negocios/mi-negocio');
-        setNegocio(data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching negocio:', err);
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          setAuthError(true);
-        } else {
-          showToast('Error al cargar información del negocio', 'error');
+        const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          console.log('No token found, redirecting to login');
+          window.location.href = '/login';
+          return;
         }
-        setLoading(false);
+        
+        console.log('🔍 Fetching negocio data...');
+        const response = await axios.get(`${baseURL}/api/negocios/mi-negocio`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (mounted) {
+          console.log('✅ Negocio data received');
+          setNegocio(response.data);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('❌ Error fetching negocio:', err);
+        if (mounted) {
+          if (err.response?.status === 401 || err.response?.status === 403) {
+            console.log('🔒 Auth error, cleaning up...');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+          } else {
+            showToast('Error al cargar información del negocio', 'error');
+            setLoading(false);
+          }
+        }
       }
     };
 
     fetchNegocio();
-  }, [api, showToast]);
-
-  if (authError) {
-    return <AuthError onRetry={() => window.location.reload()} />;
-  }
+    
+    return () => {
+      mounted = false;
+    };
+  }, []); // EMPTY DEPENDENCY ARRAY - NO MORE LOOPS!
 
   if (loading) {
     return (
@@ -235,29 +246,26 @@ function ProductosListDashboard() {
                   <p className="text-sm text-gray-600 mb-3">
                     {producto.descripcion}
                   </p>
-                  <div className="flex items-center space-x-6 text-sm">
-                    <span className="text-2xl font-bold text-purple-600">
-                      ${producto.precio}
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <span className="font-medium text-primary-600">
+                      ${parseFloat(producto.precio).toFixed(2)}
                     </span>
-                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                      Stock: {producto.stock || 0}
-                    </span>
+                    {producto.peso && (
+                      <span>{producto.peso}kg</span>
+                    )}
+                    {producto.categoria && (
+                      <span className="bg-gray-100 px-2 py-1 rounded-full text-xs">
+                        {producto.categoria}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="flex space-x-2">
-                  <button 
-                    className="btn-ios-secondary text-sm px-4 py-2"
-                    onClick={() => {/* Implementar edición */}}
-                  >
-                    Editar
-                  </button>
-                  <button 
-                    className="btn-ios-ghost text-red-600 text-sm px-4 py-2"
-                    onClick={() => handleDeleteProduct(producto.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
+                <button 
+                  className="btn-ios-ghost text-red-600 p-2"
+                  onClick={() => handleDeleteProduct(producto.id)}
+                >
+                  🗑️
+                </button>
               </div>
             </div>
           ))}
@@ -317,77 +325,66 @@ function ResumenDueño({ user, negocio }) {
   return (
     <div className="space-y-6">
       <WelcomeCard user={user} negocio={negocio} />
-      
-      {/* Métricas principales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card-ios text-center">
-          <div className="text-3xl mb-2">📦</div>
-          <div className="text-2xl font-bold text-gray-900">{stats.totalProductos}</div>
-          <div className="text-sm text-gray-600">Productos</div>
+
+      {/* Métricas Rápidas */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="card-ios bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-blue-600 text-sm font-medium">Productos</p>
+              <p className="text-2xl font-bold text-blue-900">{stats.totalProductos}</p>
+            </div>
+            <div className="text-3xl">📦</div>
+          </div>
         </div>
-        <div className="card-ios text-center">
-          <div className="text-3xl mb-2">📋</div>
-          <div className="text-2xl font-bold text-gray-900">{stats.totalPedidos}</div>
-          <div className="text-sm text-gray-600">Pedidos</div>
+
+        <div className="card-ios bg-gradient-to-br from-green-50 to-green-100 border border-green-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-green-600 text-sm font-medium">Franquiciados</p>
+              <p className="text-2xl font-bold text-green-900">{stats.totalFranquiciados}</p>
+            </div>
+            <div className="text-3xl">👥</div>
+          </div>
         </div>
-        <div className="card-ios text-center">
-          <div className="text-3xl mb-2">🏪</div>
-          <div className="text-2xl font-bold text-gray-900">{stats.totalFranquiciados}</div>
-          <div className="text-sm text-gray-600">Franquiciados</div>
+
+        <div className="card-ios bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-yellow-600 text-sm font-medium">Pedidos Pendientes</p>
+              <p className="text-2xl font-bold text-yellow-900">{stats.pedidosPendientes || 0}</p>
+            </div>
+            <div className="text-3xl">⏳</div>
+          </div>
         </div>
-        <div className="card-ios text-center">
-          <div className="text-3xl mb-2">💰</div>
-          <div className="text-2xl font-bold text-gray-900">${stats.ventasDelMes}</div>
-          <div className="text-sm text-gray-600">Ventas del mes</div>
+
+        <div className="card-ios bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-purple-600 text-sm font-medium">Ventas del Mes</p>
+              <p className="text-2xl font-bold text-purple-900">${(stats.ventasMes || 0).toFixed(2)}</p>
+            </div>
+            <div className="text-3xl">💰</div>
+          </div>
         </div>
       </div>
 
-      {/* Acciones rápidas */}
+      {/* Acciones Rápidas */}
       <div className="card-ios">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           <button 
             className="btn-ios-primary"
             onClick={handleAgregarProducto}
           >
-            <span className="text-lg mr-2">📦</span>
-            Agregar Producto
+            + Agregar Producto
           </button>
           <button 
             className="btn-ios-secondary"
             onClick={handleNuevoFranquiciado}
           >
-            <span className="text-lg mr-2">🏪</span>
-            Nuevo Franquiciado
+            + Nuevo Franquiciado
           </button>
-        </div>
-      </div>
-
-      {/* Resumen de actividad reciente */}
-      <div className="card-ios">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl">🎉</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Nuevo pedido recibido</p>
-              <p className="text-xs text-gray-500">Hace 2 horas</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl">✅</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Producto agregado al catálogo</p>
-              <p className="text-xs text-gray-500">Hace 1 día</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl">🏪</div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Nuevo franquiciado registrado</p>
-              <p className="text-xs text-gray-500">Hace 3 días</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -430,60 +427,52 @@ function MisPedidos() {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-gray-900">Mis Pedidos</h2>
-      
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Mis Pedidos</h2>
+        <Link to="/dashboard/nuevo-pedido" className="btn-ios-primary">
+          + Nuevo Pedido
+        </Link>
+      </div>
+
       {pedidos.length === 0 ? (
         <div className="card-ios text-center py-12">
-          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">📋</span>
+          <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-4xl">📋</span>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
             No tienes pedidos
           </h3>
           <p className="text-gray-600 mb-6">
-            Tus pedidos aparecerán aquí
+            Realiza tu primer pedido para comenzar
           </p>
-          <Link to="/dashboard" className="btn-ios-primary">
-            Ver Productos
+          <Link to="/dashboard/nuevo-pedido" className="btn-ios-primary">
+            Crear Primer Pedido
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {pedidos.map((pedido) => (
             <div key={pedido.id} className="card-ios">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Pedido #{pedido.id}
-                  </h4>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-gray-600">Estado:</span>
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        pedido.estado === 'NUEVO_PEDIDO' ? 'bg-blue-100 text-blue-800' :
-                        pedido.estado === 'EN_FABRICACION' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
-                        {pedido.estado.replace('_', ' ')}
-                      </span>
-                    </div>
-                    <p className="text-gray-600">
-                      <span className="font-medium">Total:</span> ${pedido.total}
-                    </p>
-                    <p className="text-gray-600">
-                      <span className="font-medium">Fecha:</span> {
-                        new Date(pedido.fechaPedido).toLocaleDateString()
-                      }
-                    </p>
-                  </div>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    Pedido #{pedido.numero}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {new Date(pedido.createdAt).toLocaleDateString()}
+                  </p>
+                  <p className="font-medium text-primary-600">
+                    Total: ${parseFloat(pedido.total).toFixed(2)}
+                  </p>
                 </div>
-                
-                <div className="text-gray-400">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  pedido.estado === 'NUEVO_PEDIDO' ? 'bg-blue-100 text-blue-800' :
+                  pedido.estado === 'EN_FABRICACION' ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-green-100 text-green-800'
+                }`}>
+                  {pedido.estado}
+                </span>
               </div>
             </div>
           ))}
@@ -505,4 +494,4 @@ function NuevoPedidoWrapper() {
   );
 }
 
-export default Dashboard; 
+export default Dashboard;
