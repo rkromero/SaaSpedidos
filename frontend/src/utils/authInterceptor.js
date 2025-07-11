@@ -52,7 +52,7 @@ export const authenticatedRequest = async (url, options = {}) => {
   const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
   const token = localStorage.getItem('token');
   
-  if (!token || !isTokenValid()) {
+  if (!token) {
     throw new Error('No valid token available');
   }
   
