@@ -1,14 +1,16 @@
 const express = require('express');
 const path = require('path');
-const app = express();
+const fs = require('fs');
+const debugInfo = require('./railway-debug.js');
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 console.log('🚀 STARTING SAAS PEDIDOS SERVER');
+console.log('📅 Debug Info:', debugInfo);
 console.log('📁 Build directory:', path.join(__dirname, 'build'));
 
 // Verificar que el directorio build existe
-const fs = require('fs');
 const buildPath = path.join(__dirname, 'build');
 if (!fs.existsSync(buildPath)) {
   console.error('❌ Build directory not found:', buildPath);

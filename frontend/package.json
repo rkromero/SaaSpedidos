@@ -1,6 +1,6 @@
 {
   "name": "saas-pedidos-frontend",
-  "version": "5.0.0",
+  "version": "5.0.1736606700000",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",

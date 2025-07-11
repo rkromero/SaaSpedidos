@@ -1,14 +1,33 @@
-FORCE REBUILD - FIXED EXPRESS SERVER
-Timestamp: 2025-01-11T16:30:00.000Z
-Version: EXPRESS_FIX_v1.0.0
+🚨 ULTRA FORCE REBUILD - EMERGENCY CSS FIX 🚨
+Timestamp: 2025-01-11T16:45:00.000Z
+Version: EMERGENCY_CSS_FIX_v2.0.0
+Commit: 6f62115
+BUILD_ID: EMERGENCY_BUILD_1736606700000
 
-This file forces Railway to rebuild with the new Express server configuration.
-The server now properly handles static files and should serve JavaScript correctly.
+CRITICAL FIX APPLIED:
+- CSS calc(auto + env()) error FIXED
+- Railway config updated with CI=false
+- PostCSS config enhanced
+- Server Express enhanced with specific routes
 
-Expected behavior:
-- main.62ae4dd7.js should load as JavaScript, not HTML
-- Express server should log all requests
-- Static files should have correct Content-Type headers
-- SPA routing should work correctly
+PREVIOUS ERROR:
+postcss-calc: Lexical error on line 1: Unrecognized text.
+auto + env(safe-area-inset-top)
 
-DO NOT DELETE THIS FILE UNTIL RAILWAY REBUILD IS CONFIRMED. 
+SOLUTION APPLIED:
+Changed: height: calc(auto + env(safe-area-inset-top));
+To: min-height: calc(56px + env(safe-area-inset-top));
+
+RAILWAY MUST USE:
+buildCommand: "cd frontend && npm install && CI=false npm run build"
+startCommand: "cd frontend && node server.js"
+
+EXPECTED RESULT:
+- Build MUST complete without PostCSS errors
+- Server MUST serve JavaScript files correctly
+- NO MORE "Unexpected token '<'" errors
+
+FORCE REBUILD NOW: 1736606700000
+EMERGENCY_BUILD_TIME: 2025-01-11T16:45:00.000Z
+
+🔥 RAILWAY DEBE REBUILDAR INMEDIATAMENTE 🔥 
