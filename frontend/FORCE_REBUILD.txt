@@ -1,0 +1,14 @@
+FORCE REBUILD - FIXED EXPRESS SERVER
+Timestamp: 2025-01-11T16:30:00.000Z
+Version: EXPRESS_FIX_v1.0.0
+
+This file forces Railway to rebuild with the new Express server configuration.
+The server now properly handles static files and should serve JavaScript correctly.
+
+Expected behavior:
+- main.62ae4dd7.js should load as JavaScript, not HTML
+- Express server should log all requests
+- Static files should have correct Content-Type headers
+- SPA routing should work correctly
+
+DO NOT DELETE THIS FILE UNTIL RAILWAY REBUILD IS CONFIRMED. 
