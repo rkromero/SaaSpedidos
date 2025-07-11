@@ -69,6 +69,7 @@ function App() {
     
     if (token && userData) {
       setUser(JSON.parse(userData));
+    }
     
     setLoading(false);
   }, []);
