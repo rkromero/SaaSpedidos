@@ -16,6 +16,7 @@ import './App.css';
 import './buildInfo.js';
 import './nuclearBuildInfo.js';
 import './ultraBuildInfo.js';
+import './routingFixInfo.js';
 // EMERGENCY FIX: Configure axios globally
 import axios from 'axios';
 

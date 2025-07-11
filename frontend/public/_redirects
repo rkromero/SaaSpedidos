@@ -1,10 +1,20 @@
-# Redirecciones para Single Page Application
-/* /index.html 200
+# Redirects para SPA en Railway
+# Los archivos estáticos deben servirse directamente
+/static/* /static/:splat 200
+*.js /:splat.js 200
+*.css /:splat.css 200
+*.map /:splat.map 200
+*.json /:splat.json 200
+*.ico /:splat.ico 200
+*.png /:splat.png 200
+*.jpg /:splat.jpg 200
+*.svg /:splat.svg 200
 
-# Asegurar que el service worker se sirva correctamente
+# Service Worker
 /sw.js /sw.js 200
-  Content-Type: application/javascript
 
-# Asegurar que el manifest se sirva correctamente
+# Manifest
 /manifest.json /manifest.json 200
-  Content-Type: application/manifest+json 
+
+# Todas las demás rutas van al index.html (SPA)
+/* /index.html 200 
