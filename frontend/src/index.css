@@ -315,7 +315,7 @@
   /* Enhanced Header Styles */
   .enhanced-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    height: calc(auto + env(safe-area-inset-top));
+    min-height: calc(56px + env(safe-area-inset-top));
     padding-top: env(safe-area-inset-top);
     backdrop-filter: blur(20px);
     box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
