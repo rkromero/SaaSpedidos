@@ -24,12 +24,26 @@ function Login({ onLogin }) {
 
     try {
       const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
+      console.log('Attempting login to:', `${baseURL}/api/auth/login`);
+      
       const response = await axios.post(`${baseURL}/api/auth/login`, formData);
+      console.log('Login successful:', response.data);
       
       const { user, token } = response.data;
+      
+      // Validar que recibimos los datos necesarios
+      if (!user || !token) {
+        throw new Error('Respuesta inválida del servidor');
+      }
+      
+      console.log('User data:', user);
+      console.log('Token received:', token ? 'Yes' : 'No');
+      
       addToast('¡Bienvenido! Sesión iniciada correctamente', 'success');
       onLogin(user, token);
     } catch (err) {
+      console.error('Login error:', err);
+      console.error('Error response:', err.response?.data);
       addToast(err.response?.data?.message || 'Error al iniciar sesión', 'error');
     } finally {
       setLoading(false);

@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import ToastContainer from './components/Toast';
 import { ToastProvider } from './contexts/ToastContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { setupAuthInterceptor, isTokenValid } from './utils/authInterceptor';
 
 import Carrito from './components/Carrito';
 import AdminPanel from './components/AdminPanel';
@@ -20,12 +21,20 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si hay un usuario logueado
+    // Configurar interceptor de autenticación
+    setupAuthInterceptor(handleLogout);
+    
+    // Verificar si hay un usuario logueado y token válido
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
-    if (token && userData) {
+    if (token && userData && isTokenValid()) {
       setUser(JSON.parse(userData));
+    } else if (token || userData) {
+      // Limpiar datos inválidos
+      console.log('Token inválido o expirado, limpiando datos...');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
     setLoading(false);
   }, []);

@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useToast } from '../contexts/ToastContext';
+import { useApi } from '../hooks/useAuthenticatedRequest';
+import { isTokenValid } from '../utils/authInterceptor';
+import AuthError from './AuthError';
 import Carrito from './Carrito';
 import AdminPanel from './AdminPanel';
 import GestionProductos from './GestionProductos';
@@ -13,27 +16,42 @@ import DashboardMetrics from './DashboardMetrics';
 function Dashboard({ user }) {
   const [negocio, setNegocio] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(false);
   const { showToast } = useToast();
+  const api = useApi();
 
   useEffect(() => {
     const fetchNegocio = async () => {
+      // Verificar token antes de hacer la petición
+      if (!isTokenValid()) {
+        console.error('Token no válido en Dashboard');
+        setAuthError(true);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${baseURL}/api/negocios/mi-negocio`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setNegocio(response.data);
+        console.log('Fetching negocio data...');
+        const data = await api.get('/api/negocios/mi-negocio');
+        setNegocio(data);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching negocio:', err);
-        showToast('Error al cargar información del negocio', 'error');
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          setAuthError(true);
+        } else {
+          showToast('Error al cargar información del negocio', 'error');
+        }
         setLoading(false);
       }
     };
 
     fetchNegocio();
-  }, []);
+  }, [api, showToast]);
+
+  if (authError) {
+    return <AuthError onRetry={() => window.location.reload()} />;
+  }
 
   if (loading) {
     return (
