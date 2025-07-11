@@ -2,7 +2,8 @@
   "$schema": "https://railway.app/railway.schema.json",
   "deploy": {
     "restartPolicyType": "ON_FAILURE",
-    "startCommand": "npm start"
+    "startCommand": "npm start",
+    "buildCommand": "cd frontend && npm ci --prefer-offline --no-audit && REACT_APP_BUILD_TIME=1752247543976 npm run build"
   },
   "build": {
     "builder": "NIXPACKS",
@@ -20,7 +21,9 @@
         "DISABLE_ESLINT_PLUGIN": "true",
         "FAST_REFRESH": "false",
         "REACT_APP_API_URL": "https://backend-production-62f0.up.railway.app",
-        "BUILD_VERSION": "1752245504717"
+        "BUILD_VERSION": "1752245504717",
+        "REACT_APP_BUILD_TIME": "1752247543976",
+        "REACT_APP_VERSION": "2.0.1752247543976"
       }
     }
   }

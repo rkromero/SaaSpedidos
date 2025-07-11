@@ -13,6 +13,7 @@ import AdminPanel from './components/AdminPanel';
 import OfflineNotification from './components/native/OfflineNotification';
 import EnhancedLayout from './components/navigation/EnhancedLayout';
 import './App.css';
+import './buildInfo.js';
 // EMERGENCY FIX: Configure axios globally
 import axios from 'axios';
 
