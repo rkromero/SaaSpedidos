@@ -6,8 +6,10 @@
   },
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "cd frontend && npm run build:railway",
-    "watchPatterns": ["frontend/**"]
+    "buildCommand": "cd frontend && npm ci --prefer-offline && npm run build:railway",
+    "watchPatterns": [
+      "frontend/**"
+    ]
   },
   "environments": {
     "production": {
@@ -17,8 +19,9 @@
         "CI": "false",
         "DISABLE_ESLINT_PLUGIN": "true",
         "FAST_REFRESH": "false",
-        "REACT_APP_API_URL": "https://backend-production-62f0.up.railway.app"
+        "REACT_APP_API_URL": "https://backend-production-62f0.up.railway.app",
+        "BUILD_VERSION": "1752245504717"
       }
     }
   }
-} 
+}

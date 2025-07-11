@@ -24,26 +24,41 @@ app.use(express.json());
 
 // Middleware de autenticación
 const authenticateToken = async (req, res, next) => {
+  console.log('🔐 AuthToken middleware called');
+  console.log('📋 Headers:', req.headers);
+  
   const authHeader = req.headers['authorization'];
+  console.log('🎫 Auth header:', authHeader);
+  
   const token = authHeader && authHeader.split(' ')[1];
+  console.log('🔑 Extracted token:', token ? `${token.substring(0, 20)}...` : 'null');
 
   if (!token) {
+    console.log('❌ No token provided');
     return res.status(401).json({ message: 'Token requerido' });
   }
 
   try {
+    console.log('🔍 Verifying token with secret:', JWT_SECRET ? 'Secret exists' : 'No secret');
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log('✅ Token decoded:', decoded);
+    
     const user = await prisma.usuario.findUnique({
       where: { id: decoded.userId }
     });
     
+    console.log('👤 User found:', user ? `${user.nombre} (${user.tipo})` : 'null');
+    
     if (!user || !user.activo) {
+      console.log('❌ User not valid or inactive');
       return res.status(401).json({ message: 'Usuario no válido' });
     }
     
     req.user = user;
+    console.log('✅ Authentication successful');
     next();
   } catch (error) {
+    console.log('❌ Token verification failed:', error.message);
     return res.status(403).json({ message: 'Token inválido' });
   }
 };

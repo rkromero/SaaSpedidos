@@ -13,6 +13,45 @@ import AdminPanel from './components/AdminPanel';
 import OfflineNotification from './components/native/OfflineNotification';
 import EnhancedLayout from './components/navigation/EnhancedLayout';
 import './App.css';
+// EMERGENCY FIX: Configure axios globally
+import axios from 'axios';
+
+// Set default base URL
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
+
+// Add global request interceptor
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    console.log('🚀 Request:', config.method?.toUpperCase(), config.url);
+    console.log('🎫 Token:', token ? 'Present' : 'Missing');
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add global response interceptor
+axios.interceptors.response.use(
+  (response) => {
+    console.log('✅ Response:', response.status, response.config.url);
+    return response;
+  },
+  (error) => {
+    console.error('❌ Request failed:', error.response?.status, error.config?.url);
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      console.log('🔒 Authentication failed, redirecting to login...');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+
 
 // Los componentes antiguos se han movido a EnhancedLayout
 

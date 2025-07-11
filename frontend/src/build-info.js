@@ -1,0 +1,4 @@
+// FORCE REBUILD 1752245504718
+export const BUILD_TIMESTAMP = 1752245504718;
+export const BUILD_VERSION = "1752245504718";
+console.log('🔥 Build timestamp:', BUILD_TIMESTAMP);

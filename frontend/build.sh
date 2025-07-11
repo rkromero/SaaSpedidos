@@ -1,21 +1,33 @@
 #!/bin/bash
 
-# Script de build optimizado para Railway
-echo "🚀 Iniciando build para Railway..."
+# Script de build optimizado para Railway - FORZAR REBUILD
+echo "🚀 Iniciando build FORZADO para Railway..."
+echo "⏰ Timestamp: $(date)"
+echo "🔥 Versión: v1.1.0-$(date +%s)"
 
 # Instalar dependencias si no están instaladas
 if [ ! -d "node_modules" ]; then
     echo "📦 Instalando dependencias..."
     npm ci --prefer-offline --no-audit
 else
-    echo "📦 Dependencias ya instaladas"
+    echo "📦 Reinstalando dependencias para forzar rebuild..."
+    rm -rf node_modules
+    npm ci --prefer-offline --no-audit
 fi
 
-# Limpiar build anterior solo si existe
+# Limpiar build anterior
 if [ -d "build" ]; then
     echo "🧹 Limpiando build anterior..."
     rm -rf build
 fi
+
+# Variables de entorno para debug
+export DEBUG=true
+export REACT_APP_API_URL=https://backend-production-62f0.up.railway.app
+export GENERATE_SOURCEMAP=false
+export CI=false
+
+echo "🌐 API URL configurada: $REACT_APP_API_URL"
 
 # Ejecutar build
 echo "🔨 Ejecutando build..."
@@ -35,6 +47,9 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
+console.log('🚀 Iniciando servidor frontend...');
+console.log('📁 Sirviendo desde:', __dirname);
+
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname), {
   maxAge: '1y',
@@ -47,11 +62,13 @@ app.use(express.static(path.join(__dirname), {
 
 // Manejar rutas SPA
 app.get('*', (req, res) => {
+  console.log('📄 Serving SPA for:', req.path);
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${port}`);
+  console.log(`🚀 Servidor frontend corriendo en puerto ${port}`);
+  console.log(`📱 Aplicación disponible en http://localhost:${port}`);
 });
 EOF
 
@@ -59,7 +76,7 @@ EOF
 cat > build/package.json << 'EOF'
 {
   "name": "saas-pedidos-frontend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -73,4 +90,5 @@ cat > build/package.json << 'EOF'
 }
 EOF
 
-echo "✅ Build completado exitosamente!" 
+echo "✅ Build completado exitosamente!"
+echo "🎯 Versión: 1.1.0-$(date +%s)" 
