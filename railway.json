@@ -1,17 +1,7 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "deploy": {
-    "restartPolicyType": "ON_FAILURE",
     "startCommand": "node server.js",
-    "buildCommand": "cd frontend && rm -rf build && npm install && CI=false GENERATE_SOURCEMAP=false npm run build"
-  },
-  "environments": {
-    "production": {
-      "variables": {
-        "NODE_ENV": "production",
-        "CI": "false",
-        "GENERATE_SOURCEMAP": "false"
-      }
-    }
+    "buildCommand": "cd frontend && npm install && npm run build"
   }
 }
