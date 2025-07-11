@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useToast } from '../contexts/ToastContext';
 
 function GestionProductos({ onProductoCreated }) {
   const [productos, setProductos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
@@ -15,13 +15,11 @@ function GestionProductos({ onProductoCreated }) {
   });
   const [editingId, setEditingId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [productosLoaded, setProductosLoaded] = useState(false);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    fetchProductos();
-  }, []);
-
   const fetchProductos = async () => {
+    setLoading(true);
     try {
       const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
@@ -29,10 +27,11 @@ function GestionProductos({ onProductoCreated }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProductos(response.data);
-      setLoading(false);
+      setProductosLoaded(true);
     } catch (err) {
       console.error('Error fetching productos:', err);
       showToast('Error al cargar productos', 'error');
+    } finally {
       setLoading(false);
     }
   };
@@ -72,7 +71,6 @@ function GestionProductos({ onProductoCreated }) {
         'success'
       );
       
-      // Si se está creando un producto y hay callback, ejecutarlo
       if (isCreating && onProductoCreated) {
         onProductoCreated();
       }
@@ -121,15 +119,6 @@ function GestionProductos({ onProductoCreated }) {
     setShowForm(false);
   };
 
-  if (loading) {
-    return (
-      <div className="loading-ios">
-        <div className="spinner-ios"></div>
-        <p className="text-gray-600 mt-4">Cargando productos...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -138,15 +127,24 @@ function GestionProductos({ onProductoCreated }) {
           <div>
             <h1 className="text-lg font-bold mb-1">Gestión de Productos</h1>
             <p className="text-green-100 text-sm">
-              {productos.length} productos en catálogo
+              {productosLoaded ? `${productos.length} productos` : 'Haz click en "Cargar" para ver productos'}
             </p>
           </div>
-          <button 
-            className="bg-white text-green-600 px-4 py-2 rounded-ios font-semibold text-sm shadow-ios"
-            onClick={() => setShowForm(true)}
-          >
-            + Agregar
-          </button>
+          <div className="flex gap-2">
+            <button 
+              className="bg-white text-green-600 px-4 py-2 rounded-ios font-semibold text-sm shadow-ios"
+              onClick={fetchProductos}
+              disabled={loading}
+            >
+              {loading ? 'Cargando...' : 'Cargar Productos'}
+            </button>
+            <button 
+              className="bg-white text-green-600 px-4 py-2 rounded-ios font-semibold text-sm shadow-ios"
+              onClick={() => setShowForm(true)}
+            >
+              + Agregar
+            </button>
+          </div>
         </div>
       </div>
 
@@ -206,9 +204,9 @@ function GestionProductos({ onProductoCreated }) {
                   name="descripcion"
                   value={formData.descripcion}
                   onChange={handleChange}
-                  rows="3"
-                  className="input-ios"
-                  placeholder="Describe el producto, materiales, tamaños disponibles..."
+                  rows={3}
+                  className="input-ios resize-none"
+                  placeholder="Describe el producto..."
                 />
               </div>
 
@@ -217,22 +215,17 @@ function GestionProductos({ onProductoCreated }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Precio *
                   </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      name="precio"
-                      value={formData.precio}
-                      onChange={handleChange}
-                      required
-                      min="0"
-                      step="0.01"
-                      className="input-ios pl-8"
-                      placeholder="0.00"
-                    />
-                  </div>
+                  <input
+                    type="number"
+                    name="precio"
+                    value={formData.precio}
+                    onChange={handleChange}
+                    required
+                    min="0"
+                    step="0.01"
+                    className="input-ios"
+                    placeholder="0.00"
+                  />
                 </div>
                 
                 <div>
@@ -252,39 +245,20 @@ function GestionProductos({ onProductoCreated }) {
                 </div>
               </div>
 
-              <div className="bg-yellow-50 p-4 rounded-ios">
-                <div className="flex items-center space-x-2">
-                  <span className="text-yellow-600">⚙️</span>
-                  <div>
-                    <p className="font-medium text-yellow-800">Producto bajo pedido</p>
-                    <p className="text-sm text-yellow-700">
-                      Este producto se fabricará cuando se reciba un pedido
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex space-x-3">
-                <button
-                  type="submit"
-                  className="btn-ios-primary flex-1"
-                  disabled={submitting}
-                >
-                  {submitting ? (
-                    <div className="flex items-center justify-center">
-                      <div className="spinner-ios mr-2"></div>
-                      Guardando...
-                    </div>
-                  ) : (
-                    `${editingId ? 'Actualizar' : 'Crear'} Producto`
-                  )}
-                </button>
+              <div className="flex justify-end space-x-3">
                 <button
                   type="button"
-                  className="btn-ios-secondary flex-1"
+                  className="btn-ios-secondary"
                   onClick={resetForm}
                 >
                   Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn-ios-primary"
+                  disabled={submitting}
+                >
+                  {submitting ? 'Guardando...' : editingId ? 'Actualizar' : 'Crear'}
                 </button>
               </div>
             </form>
@@ -293,106 +267,84 @@ function GestionProductos({ onProductoCreated }) {
       )}
 
       {/* Lista de productos */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Productos ({productos.length})
-          </h3>
-          {!showForm && (
-            <button
-              className="btn-ios-ghost text-sm"
-              onClick={() => setShowForm(true)}
-            >
-              + Agregar producto
-            </button>
-          )}
-        </div>
-        
-        {productos.length === 0 ? (
-          <div className="card-ios text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">📦</span>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No hay productos
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Agrega tu primer producto para empezar
-            </p>
-            <button
-              className="btn-ios-primary"
-              onClick={() => setShowForm(true)}
-            >
-              Agregar Producto
-            </button>
-          </div>
-        ) : (
+      {productosLoaded && productos.length > 0 && (
+        <div className="card-ios">
           <div className="space-y-3">
-            {productos.map((producto) => (
-              <div key={producto.id} className="card-ios">
-                <div className="space-y-3">
-                  {/* Header del producto */}
-                  <div className="flex items-start justify-between">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Productos ({productos.length})
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {productos.map((producto) => (
+                <div
+                  key={producto.id}
+                  className="border border-gray-200 rounded-ios p-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 text-lg mb-1">
-                        {producto.nombre}
-                      </h4>
-                      <div className="flex items-center space-x-2">
-                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                          Para fabricación
+                      <h4 className="font-semibold text-gray-900">{producto.nombre}</h4>
+                      {producto.categoria && (
+                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                          {producto.categoria}
                         </span>
-                        {producto.categoria && (
-                          <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {producto.categoria}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="text-right">
-                      <div className="text-xl font-bold text-primary-600">
-                        ${producto.precio}
-                      </div>
-                      {producto.peso && (
-                        <div className="text-xs text-gray-500">
-                          {producto.peso} kg
-                        </div>
                       )}
                     </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => handleEdit(producto)}
+                        className="text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => handleDelete(producto.id)}
+                        className="text-red-600 hover:text-red-800 text-sm"
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
-
-                  {/* Descripción */}
+                  
                   {producto.descripcion && (
-                    <p className="text-gray-700 text-sm leading-relaxed">
-                      {producto.descripcion}
-                    </p>
+                    <p className="text-sm text-gray-600 mb-2">{producto.descripcion}</p>
                   )}
-
-                  {/* Botones de acción */}
-                  <div className="flex space-x-3">
-                    <button
-                      className="btn-ios-secondary flex-1"
-                      onClick={() => handleEdit(producto)}
-                    >
-                      ✏️ Editar
-                    </button>
-                    <button
-                      className="btn-ios-ghost flex-1 text-red-600"
-                      onClick={() => {
-                        if (window.confirm('¿Eliminar este producto?')) {
-                          handleDelete(producto.id);
-                        }
-                      }}
-                    >
-                      🗑️ Eliminar
-                    </button>
+                  
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="font-semibold text-green-600">
+                      ${producto.precio}
+                    </span>
+                    {producto.peso && (
+                      <span className="text-gray-500">
+                        {producto.peso} kg
+                      </span>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {productosLoaded && productos.length === 0 && (
+        <div className="card-ios text-center py-12">
+          <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-4xl">📦</span>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No hay productos
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Agrega tu primer producto para empezar
+          </p>
+          <button 
+            className="btn-ios-primary"
+            onClick={() => setShowForm(true)}
+          >
+            + Agregar Producto
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useToast } from '../contexts/ToastContext';
 import './NuevoPedido.css';
@@ -7,15 +7,13 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
   const [productos, setProductos] = useState([]);
   const [pedidoItems, setPedidoItems] = useState([]);
   const [notas, setNotas] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [productosLoaded, setProductosLoaded] = useState(false);
   const { showSuccess, showError } = useToast();
 
-  useEffect(() => {
-    fetchProductos();
-  }, []);
-
   const fetchProductos = async () => {
+    setLoading(true);
     try {
       const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
       const token = localStorage.getItem('token');
@@ -23,10 +21,11 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProductos(response.data);
-      setLoading(false);
+      setProductosLoaded(true);
     } catch (err) {
       console.error('Error fetching productos:', err);
       showError('Error al cargar productos');
+    } finally {
       setLoading(false);
     }
   };
@@ -35,14 +34,12 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
     const existingItem = pedidoItems.find(item => item.productoId === producto.id);
     
     if (existingItem) {
-      // Si ya existe, aumentar cantidad
       setPedidoItems(pedidoItems.map(item =>
         item.productoId === producto.id
           ? { ...item, cantidad: item.cantidad + 1 }
           : item
       ));
     } else {
-      // Si no existe, agregar nuevo item
       setPedidoItems([...pedidoItems, {
         productoId: producto.id,
         nombre: producto.nombre,
@@ -54,7 +51,6 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
 
   const cambiarCantidad = (productoId, nuevaCantidad) => {
     if (nuevaCantidad <= 0) {
-      // Eliminar producto si cantidad es 0
       setPedidoItems(pedidoItems.filter(item => item.productoId !== productoId));
     } else {
       setPedidoItems(pedidoItems.map(item =>
@@ -108,8 +104,6 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
     }
   };
 
-  if (loading) return <div className="loading">Cargando productos...</div>;
-
   return (
     <div className="nuevo-pedido">
       <div className="header-section">
@@ -121,25 +115,49 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
 
       <div className="pedido-container">
         <div className="productos-section">
-          <h3>Productos Disponibles</h3>
-          <div className="productos-grid">
-            {productos.filter(p => p.activo).map((producto) => (
-              <div key={producto.id} className="producto-card">
-                <div className="producto-info">
-                  <h4>{producto.nombre}</h4>
-                  <p>{producto.descripcion}</p>
-                  <p className="precio">${producto.precio}</p>
-                  <p className="fabricacion">Para fabricación</p>
-                </div>
-                <button 
-                  className="btn btn-primary btn-small"
-                  onClick={() => agregarProducto(producto)}
-                >
-                  Agregar
-                </button>
-              </div>
-            ))}
+          <div className="flex justify-between items-center mb-4">
+            <h3>Productos Disponibles</h3>
+            <button 
+              className="btn btn-primary btn-small"
+              onClick={fetchProductos}
+              disabled={loading}
+            >
+              {loading ? 'Cargando...' : 'Cargar Productos'}
+            </button>
           </div>
+
+          {!productosLoaded && (
+            <div className="productos-placeholder">
+              <p>Haz click en "Cargar Productos" para ver el catálogo</p>
+            </div>
+          )}
+
+          {productosLoaded && productos.length === 0 && (
+            <div className="productos-empty">
+              <p>No hay productos disponibles</p>
+            </div>
+          )}
+
+          {productosLoaded && productos.length > 0 && (
+            <div className="productos-grid">
+              {productos.filter(p => p.activo).map((producto) => (
+                <div key={producto.id} className="producto-card">
+                  <div className="producto-info">
+                    <h4>{producto.nombre}</h4>
+                    <p>{producto.descripcion}</p>
+                    <p className="precio">${producto.precio}</p>
+                    <p className="fabricacion">Para fabricación</p>
+                  </div>
+                  <button 
+                    className="btn btn-primary btn-small"
+                    onClick={() => agregarProducto(producto)}
+                  >
+                    Agregar
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="pedido-section">
@@ -199,25 +217,25 @@ function NuevoPedido({ onPedidoCreado, onCancelar }) {
                 id="notas"
                 value={notas}
                 onChange={(e) => setNotas(e.target.value)}
-                placeholder="Agregar comentarios o instrucciones especiales..."
+                placeholder="Especifica colores, tallas, fechas de entrega, etc..."
                 rows="3"
               />
             </div>
-
+            
             <div className="form-actions">
               <button 
-                type="submit" 
-                className="btn btn-primary"
-                disabled={pedidoItems.length === 0 || submitting}
-              >
-                {submitting ? 'Creando Pedido...' : 'Crear Pedido'}
-              </button>
-              <button 
                 type="button" 
-                className="btn btn-secondary" 
+                className="btn btn-secondary"
                 onClick={onCancelar}
               >
                 Cancelar
+              </button>
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={submitting || pedidoItems.length === 0}
+              >
+                {submitting ? 'Creando pedido...' : 'Crear Pedido'}
               </button>
             </div>
           </form>
