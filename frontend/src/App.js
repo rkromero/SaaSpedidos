@@ -14,6 +14,7 @@ import OfflineNotification from './components/native/OfflineNotification';
 import EnhancedLayout from './components/navigation/EnhancedLayout';
 import './App.css';
 import './buildInfo.js';
+import './nuclearBuildInfo.js';
 // EMERGENCY FIX: Configure axios globally
 import axios from 'axios';
 
@@ -58,6 +59,7 @@ axios.interceptors.response.use(
 
 function App() {
   const [user, setUser] = useState(null);
+  const [negocio, setNegocio] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -74,6 +76,30 @@ function App() {
     
     setLoading(false);
   }, []);
+
+  // Fetch negocio ONCE in App.js, pass as prop
+  useEffect(() => {
+    const fetchNegocio = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      
+      try {
+        const baseURL = process.env.REACT_APP_API_URL || 'https://backend-production-62f0.up.railway.app';
+        console.log('🔄 Fetching negocio ONCE in App.js...');
+        const response = await axios.get(`${baseURL}/api/negocios/mi-negocio`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log('✅ Negocio fetched successfully in App.js');
+        setNegocio(response.data);
+      } catch (err) {
+        console.error('❌ Error fetching negocio in App:', err);
+      }
+    };
+
+    if (user) {
+      fetchNegocio();
+    }
+  }, [user]); // Only when user changes
 
   const handleLogin = (userData, token) => {
     setUser(userData);
@@ -121,7 +147,7 @@ function App() {
                 element={
                   user ? (
                     <EnhancedLayout user={user} onLogout={handleLogout}>
-                      <Dashboard user={user} />
+                      <Dashboard user={user} negocio={negocio} />
                     </EnhancedLayout>
                   ) : (
                     <Navigate to="/login" />
